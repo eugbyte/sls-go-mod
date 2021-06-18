@@ -1,5 +1,8 @@
 .PHONY: build clean deploy gomodgen
 
+dev:
+	sam local start-api --template sam-template.yml
+
 build: gomodgen
 	export GO111MODULE=on
 	env GOOS=linux go build -ldflags="-s -w" -o bin/hello hello/main.go
@@ -14,10 +17,4 @@ gomodgen:
 	chmod u+x gomod.sh
 	./gomod.sh
 
-sam-local:
-	sam local start-api --template sam-template.yml
-
-invoke-hello:
-	make build	
-	sls invoke local --function hello --data '{"body":{"message":"Hi!"}}'
 

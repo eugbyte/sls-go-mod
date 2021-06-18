@@ -5,41 +5,39 @@ import (
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
+	"github.com/serverless/sls-go-mod/middleware"
+	errs "github.com/serverless/sls-go-mod/models/custom_errors"
 	"github.com/serverless/sls-go-mod/services/util"
 )
 
-type Response events.APIGatewayProxyResponse
-type Request events.APIGatewayProxyRequest
-type BodyRequest struct {
+type Response = events.APIGatewayProxyResponse
+type Request = events.APIGatewayProxyRequest
+type RequestBody struct {
 	Message string `json:"message"`
 }
 
 // Handler is our lambda handler invoked by the `lambda.Start` function call
 func Handler(request Request) (Response, error) {
 
-	util.Trace("In Handler")
-	util.Trace(request)
+	util.Trace("body", request.Body)
 
-	// BodyRequest will be used to take the json response from client and build it
-	var bodyRequest BodyRequest
-
-	// Unmarshal the json, return 404 if error
-	err := json.Unmarshal([]byte(request.Body), &bodyRequest)
+	// BodyRequest will be used to take the json r esponse from client and build it
+	var requestBody RequestBody
+	err := json.Unmarshal([]byte(request.Body), &requestBody)
 	if err != nil {
-		util.LogError(err)
-		return Response{Body: err.Error(), StatusCode: 400}, err
+		notFoundError := errs.NewBadRequest(err, "cannot unmarshall request.Body")
+		return Response{Body: notFoundError.Error(), StatusCode: notFoundError.StatusCode}, notFoundError
 	}
 
 	responseBody, err := json.Marshal((map[string]string{
-		"message": bodyRequest.Message,
+		"message": requestBody.Message,
 	}))
-
 	if err != nil {
-		util.LogError(err)
-		return Response{Body: err.Error(), StatusCode: 400}, err
+		internalError := errs.NewInternalServerError(err, "cannot marshall requestBody.Message")
+		return Response{Body: internalError.Error(), StatusCode: internalError.StatusCode}, internalError
 	}
 
-	resp := Response{
+	response := Response{
 		StatusCode:      200,
 		IsBase64Encoded: false,
 		Body:            string(responseBody),
@@ -47,10 +45,10 @@ func Handler(request Request) (Response, error) {
 			"Content-Type": "application/json",
 		},
 	}
-
-	return resp, nil
+	return response, nil
 }
 
 func main() {
-	lambda.Start(Handler)
+	wrappedHandler := middleware.Middify(Handler)
+	lambda.Start(wrappedHandler)
 }
