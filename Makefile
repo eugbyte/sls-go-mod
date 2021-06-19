@@ -1,11 +1,19 @@
 .PHONY: build clean deploy gomodgen
 
-dev:
+aws-sam:
 	sam local start-api --template sam-template.yml
 
-build: gomodgen
+gomodgen:
+	chmod u+x gomod.sh
+	./gomod.sh
+
+build: 
+	# make gomodgen
 	export GO111MODULE=on
-	env GOOS=linux go build -ldflags="-s -w" -o bin/hello hello/main.go
+	env GOOS=linux go build -ldflags="-s -w" -o bin/hello src/handlers/hello/main.go
+
+dev: 
+	when-changed -r "src" make build
 
 clean:
 	rm -rf ./bin ./vendor go.sum
@@ -13,8 +21,5 @@ clean:
 deploy: clean build
 	sls deploy --verbose
 
-gomodgen:
-	chmod u+x gomod.sh
-	./gomod.sh
 
 
