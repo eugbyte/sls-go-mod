@@ -8,9 +8,9 @@ gomodgen:
 	./gomod.sh
 
 build: 
-	# make gomodgen
+	# gomodgen
 	export GO111MODULE=on
-	env GOOS=linux go build -ldflags="-s -w" -o bin/hello src/handlers/hello/main.go
+	env GOOS=linux go build -o bin/hello -ldflags="-s -w" src/handlers/hello/main.go
 
 dev: 
 	when-changed -r "src" make build
