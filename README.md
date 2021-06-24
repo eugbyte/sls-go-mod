@@ -9,6 +9,7 @@ Full list of commands are listed in Makefile
 ### start aws-sam development server  
 ```make aws-sam```  
 
-### watch files in ./src directory and recompile whenever they change
+### watch files in ./src directory and recompile whenever they change  
+Open another terminal
 ```make dev```
 
