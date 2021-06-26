@@ -13,6 +13,7 @@ build:
 	env GOOS=linux go build -o bin/hello -ldflags="-s -w" src/handlers/hello/main.go
 
 dev: 
+	make build
 	when-changed -r "src" make build
 
 clean:

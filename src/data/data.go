@@ -12,8 +12,6 @@ import (
 	"github.com/pkg/errors"
 )
 
-type Person struct{}
-
 type Attributes = map[string]*dynamodb.AttributeValue
 
 type DynamoDBAdapter struct {
@@ -23,7 +21,7 @@ type DynamoDBAdapter struct {
 type IDynamoDBAdapter interface {
 	Create(obj interface{}) (interface{}, error)
 	Read(key Attributes, out interface{}) error
-	Update(updateItemInput dynamodb.UpdateItemInput) error
+	Update(updateInput *dynamodb.UpdateItemInput) error
 	Delete(deleteInput *dynamodb.DeleteItemInput) error
 }
 
