@@ -14,3 +14,30 @@ Resources:
           Properties:
             Path: /hello
             Method: post
+
+  CreateFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: bin/create
+      Runtime: go1.x
+      Events:
+        Vote:
+          Type: Api
+          Properties:
+            Path: /create
+            Method: post 
+
+  BookTable:
+    Type: AWS::DynamoDB::Table
+    Properties: 
+      AttributeDefinitions: 
+        - AttributeName: id
+          AttributeType: S
+      KeySchema: 
+        - AttributeName: id
+          KeyType: HASH
+      ProvisionedThroughput: 
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+      StreamSpecification:
+        StreamViewType: NEW_IMAGE

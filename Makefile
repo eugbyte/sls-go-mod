@@ -11,6 +11,7 @@ build:
 	# gomodgen
 	export GO111MODULE=on
 	env GOOS=linux go build -o bin/hello -ldflags="-s -w" src/handlers/hello/main.go
+	env GOOS=linux go build -o bin/create -ldflags="-s -w" src/handlers/create/main.go
 
 dev: 
 	make build
