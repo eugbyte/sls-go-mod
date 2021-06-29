@@ -9,20 +9,21 @@ import (
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
 	"github.com/aws/aws-sdk-go/service/dynamodb/expression"
+	"github.com/jinzhu/copier"
 	"github.com/pkg/errors"
 )
 
 type Attributes = map[string]*dynamodb.AttributeValue
 
 type DynamoDBAdapter struct {
-	TableName string
 }
 
 type IDynamoDBAdapter interface {
-	Create(obj interface{}) (interface{}, error)
-	Read(key Attributes, out interface{}) error
+	Put(tableName string, obj interface{}) (interface{}, error)
+	Read(tableName string, key Attributes, outPointer *interface{}) error
 	Update(updateInput *dynamodb.UpdateItemInput) error
-	Delete(deleteInput *dynamodb.DeleteItemInput) error
+	Delete(tableName string, key map[string]*dynamodb.AttributeValue) error
+	Scan(tableName string, expr expression.Expression, emptyObj interface{}) ([]interface{}, error)
 }
 
 // Initialize a session that the SDK will use to load
@@ -32,10 +33,11 @@ var currentSession = session.Must(session.NewSessionWithOptions(session.Options{
 	SharedConfigState: session.SharedConfigEnable,
 }))
 
-// Create DynamoDB client
-var client = dynamodb.New(currentSession)
+// Create DynamoDB Client
+var Client = dynamodb.New(currentSession)
 
-func (adapter DynamoDBAdapter) Create(obj interface{}) (interface{}, error) {
+// When an existing item found, Put replaces it with the new one
+func (adapter DynamoDBAdapter) Put(tableName string, obj interface{}) (interface{}, error) {
 	item, err := dynamodbattribute.MarshalMap(obj)
 	if err != nil {
 		log.Fatalf("Got error marshalling new movie item: %s", err)
@@ -44,10 +46,10 @@ func (adapter DynamoDBAdapter) Create(obj interface{}) (interface{}, error) {
 
 	input := &dynamodb.PutItemInput{
 		Item:      item,
-		TableName: aws.String(adapter.TableName),
+		TableName: aws.String(tableName),
 	}
 
-	_, err = client.PutItem(input)
+	_, err = Client.PutItem(input)
 	if err != nil {
 		log.Fatalf("Got error calling PutItem: %s", err)
 		return nil, err
@@ -56,7 +58,7 @@ func (adapter DynamoDBAdapter) Create(obj interface{}) (interface{}, error) {
 	return obj, nil
 }
 
-func (adapter DynamoDBAdapter) Read(key Attributes, outPointer interface{}) error {
+func (adapter DynamoDBAdapter) Read(tableName string, key Attributes, outPointer *interface{}) error {
 
 	if reflect.ValueOf(outPointer).Kind() == reflect.Ptr {
 		err := errors.New("out argument must be a pointer")
@@ -64,8 +66,8 @@ func (adapter DynamoDBAdapter) Read(key Attributes, outPointer interface{}) erro
 		return err
 	}
 
-	result, err := client.GetItem(&dynamodb.GetItemInput{
-		TableName: aws.String(adapter.TableName),
+	result, err := Client.GetItem(&dynamodb.GetItemInput{
+		TableName: aws.String(tableName),
 		Key:       key,
 	})
 	if err != nil {
@@ -80,7 +82,7 @@ func (adapter DynamoDBAdapter) Read(key Attributes, outPointer interface{}) erro
 		return err
 	}
 
-	err = dynamodbattribute.UnmarshalMap(result.Item, &outPointer)
+	err = dynamodbattribute.UnmarshalMap(result.Item, outPointer)
 	if err != nil {
 		log.Fatalf("Failed to unmarshal Record")
 		return err
@@ -91,12 +93,7 @@ func (adapter DynamoDBAdapter) Read(key Attributes, outPointer interface{}) erro
 
 func (adapter DynamoDBAdapter) Update(updateInput *dynamodb.UpdateItemInput) error {
 
-	if adapter.TableName != *updateInput.TableName {
-		error := errors.New("tablename provided must match that initialized with DynamoDBAdapter")
-		return error
-	}
-
-	_, err := client.UpdateItem(updateInput)
+	_, err := Client.UpdateItem(updateInput)
 	if err != nil {
 		error := errors.Errorf("Got error calling UpdateItem")
 		return error
@@ -104,13 +101,12 @@ func (adapter DynamoDBAdapter) Update(updateInput *dynamodb.UpdateItemInput) err
 	return nil
 }
 
-func (adapter DynamoDBAdapter) Delete(deleteInput *dynamodb.DeleteItemInput) error {
-	if len(*deleteInput.TableName) > 0 && adapter.TableName != *deleteInput.TableName {
-		error := errors.New("tablename provided must match that initialized with DynamoDBAdapter")
-		return error
+func (adapter DynamoDBAdapter) Delete(tableName string, key map[string]*dynamodb.AttributeValue) error {
+	deleteInput := &dynamodb.DeleteItemInput{
+		Key:       key,
+		TableName: &tableName,
 	}
-
-	_, err := client.DeleteItem(deleteInput)
+	_, err := Client.DeleteItem(deleteInput)
 	if err != nil {
 		error := errors.Errorf("Got error calling UpdateItem")
 		return error
@@ -118,7 +114,41 @@ func (adapter DynamoDBAdapter) Delete(deleteInput *dynamodb.DeleteItemInput) err
 	return nil
 }
 
-func (adapter DynamoDBAdapter) Scan() error {
-	expression.NewBuilder()
-	return nil
+func (adapter DynamoDBAdapter) Scan(tableName string, expr expression.Expression, emptyObj interface{}) ([]interface{}, error) {
+
+	params := &dynamodb.ScanInput{
+		ExpressionAttributeNames:  expr.Names(),
+		ExpressionAttributeValues: expr.Values(),
+		FilterExpression:          expr.Filter(),
+		ProjectionExpression:      expr.Projection(),
+		TableName:                 aws.String(tableName),
+	}
+
+	result, err := Client.Scan(params)
+	if err != nil {
+		error := errors.Errorf("Got error calling Scan")
+		return nil, error
+	}
+
+	items := result.Items
+	count := len(items)
+
+	// Initialize empty slice with empty objs
+
+	objs := make([]interface{}, count)
+
+	for i := 0; i < count; i++ {
+		var copyObj interface{}
+		copier.Copy(copyObj, emptyObj)
+		objs[i] = copyObj
+	}
+
+	for i, value := range items {
+		err = dynamodbattribute.UnmarshalMap(value, &objs[i])
+		if err != nil {
+			log.Fatalf("Got error unmarshalling: %s", err)
+		}
+	}
+
+	return objs, err
 }
