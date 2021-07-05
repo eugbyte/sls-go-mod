@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
@@ -26,22 +27,22 @@ func Handler(dynamoDBAdapter data.IDynamoDBAdapter, request Request) (Response, 
 		return Response{Body: notFoundError.Error(), StatusCode: notFoundError.StatusCode}, notFoundError
 	}
 
-	responseBody, err := json.Marshal(book)
+	_, err = dynamoDBAdapter.Put("BookTable", book)
 	if err != nil {
-		internalError := errs.NewInternalServerError(err, "cannot marshall requestBody.Message")
-		return Response{Body: internalError.Error(), StatusCode: internalError.StatusCode}, internalError
+		fmt.Println(err.Error() + "Fail")
+		// internalError := errs.NewInternalServerError(err, "cannot put book")
+		return Response{Body: "cannot put book", StatusCode: 500}, err
 	}
 
 	response := Response{
 		StatusCode:      200,
 		IsBase64Encoded: false,
-		Body:            string(responseBody),
+		Body:            string(request.Body),
 		Headers: map[string]string{
 			"Content-Type": "application/json",
 		},
 	}
 	return response, nil
-
 }
 
 // Dependency injection

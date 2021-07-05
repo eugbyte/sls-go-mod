@@ -33,8 +33,10 @@ var currentSession = session.Must(session.NewSessionWithOptions(session.Options{
 	SharedConfigState: session.SharedConfigEnable,
 }))
 
+var config = aws.NewConfig().WithRegion("ap-southeast-1")
+
 // Create DynamoDB Client
-var Client = dynamodb.New(currentSession)
+var Client = dynamodb.New(currentSession, config)
 
 // When an existing item found, Put replaces it with the new one
 func (adapter DynamoDBAdapter) Put(tableName string, obj interface{}) (interface{}, error) {
@@ -134,7 +136,6 @@ func (adapter DynamoDBAdapter) Scan(tableName string, expr expression.Expression
 	count := len(items)
 
 	// Initialize empty slice with empty objs
-
 	objs := make([]interface{}, count)
 
 	for i := 0; i < count; i++ {

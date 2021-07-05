@@ -1,0 +1,27 @@
+{
+    "AttributeDefinitions": [
+        {
+            "AttributeName": "Id",
+            "AttributeType": "S"
+        },
+        {
+            "AttributeName": "Title",
+            "AttributeType": "S"
+        },
+        {
+            "AttributeName": "Author",
+            "AttributeType": "S"
+        }
+    ],
+    "TableName": "Book",
+    "KeySchema": [
+        {
+            "AttributeName": "Id",
+            "KeyType": "HASH"
+        }
+    ],
+    "ProvisionedThroughput": {
+        "ReadCapacityUnits": 2,
+        "WriteCapacityUnits": 2
+    }
+}

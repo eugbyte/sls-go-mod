@@ -30,7 +30,7 @@ func Handler(request Request) (Response, error) {
 	}
 
 	responseBody, err := json.Marshal((map[string]string{
-		"message": requestBody.Message,
+		"message": requestBody.Message + "!!",
 	}))
 	if err != nil {
 		internalError := errs.NewInternalServerError(err, "cannot marshall requestBody.Message")
