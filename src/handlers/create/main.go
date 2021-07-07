@@ -6,6 +6,7 @@ import (
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
+	"github.com/google/uuid"
 	"github.com/serverless/sls-go-mod/src/data"
 	"github.com/serverless/sls-go-mod/src/middleware"
 	"github.com/serverless/sls-go-mod/src/models"
@@ -27,8 +28,12 @@ func Handler(dynamoDBAdapter data.IDynamoDBAdapter, request Request) (Response, 
 		return Response{Body: notFoundError.Error(), StatusCode: notFoundError.StatusCode}, notFoundError
 	}
 
-	_, err = dynamoDBAdapter.Put("BookTable", book)
+	book.Id = uuid.New().String()
+	util.Trace("book", book)
+
+	_, err = dynamoDBAdapter.Put("Book", book)
 	if err != nil {
+		util.LogError(err)
 		fmt.Println(err.Error() + "Fail")
 		// internalError := errs.NewInternalServerError(err, "cannot put book")
 		return Response{Body: "cannot put book", StatusCode: 500}, err

@@ -24,6 +24,10 @@ stop-db:
 	docker-compose -f src/data/docker-compose.yaml down
 
 db-admin:
+	@if [ -z `which dynamodb-admin 2> /dev/null` ]; then \
+			echo "Need to install dynamodb-admin, execute \"npm install dynamodb-admin -g\"";\
+			exit 1;\
+	fi
 	DYNAMO_ENDPOINT=http://localhost:18000 dynamodb-admin
 
 clean:
@@ -32,5 +36,9 @@ clean:
 deploy: clean build
 	sls deploy --verbose
 
+create-table:
+	aws dynamodb create-table --cli-input-json file://src/data/create_book_table.json --endpoint-url http://localhost:18000
 
+seed-data:
+	aws dynamodb batch-write-item --request-items file://src/data/seed_book_table.json --endpoint-url http://localhost:18000
 

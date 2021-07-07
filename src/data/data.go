@@ -11,6 +11,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/dynamodb/expression"
 	"github.com/jinzhu/copier"
 	"github.com/pkg/errors"
+	"github.com/serverless/sls-go-mod/src/services/util"
 )
 
 type Attributes = map[string]*dynamodb.AttributeValue
@@ -29,11 +30,15 @@ type IDynamoDBAdapter interface {
 // Initialize a session that the SDK will use to load
 // credentials from the shared credentials file ~/.aws/credentials
 // and region from the shared configuration file ~/.aws/config.
-var currentSession = session.Must(session.NewSessionWithOptions(session.Options{
-	SharedConfigState: session.SharedConfigEnable,
-}))
 
-var config = aws.NewConfig().WithRegion("ap-southeast-1")
+// session.NewSessionWithOptions(session.Options{
+// 	SharedConfigState: session.SharedConfigEnable,
+// })
+var currentSession = session.Must(session.NewSession())
+
+var config = aws.NewConfig().
+	WithRegion("ap-southeast-1").
+	WithEndpoint("http://localhost:18000")
 
 // Create DynamoDB Client
 var Client = dynamodb.New(currentSession, config)
@@ -51,8 +56,11 @@ func (adapter DynamoDBAdapter) Put(tableName string, obj interface{}) (interface
 		TableName: aws.String(tableName),
 	}
 
+	util.Trace("item", &input)
+
 	_, err = Client.PutItem(input)
 	if err != nil {
+		util.LogError("dynamodb error")
 		log.Fatalf("Got error calling PutItem: %s", err)
 		return nil, err
 	}
