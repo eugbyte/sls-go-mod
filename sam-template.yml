@@ -25,6 +25,7 @@ Resources:
           Properties:
             Path: /create
             Method: post 
+      Timeout: 7
 
   BookTable:
     Type: AWS::DynamoDB::Table

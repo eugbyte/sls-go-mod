@@ -12,7 +12,7 @@ func Trace(prefix string, obj interface{}) {
 	if err != nil {
 		fmt.Println((err))
 	}
-	fmt.Println(colors.Blue, prefix+":", string(bytes), colors.Reset)
+	fmt.Println(colors.Green, prefix+":", string(bytes), colors.Reset)
 }
 
 func LogError(obj interface{}) {

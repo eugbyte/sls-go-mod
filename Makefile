@@ -1,7 +1,8 @@
 .PHONY: build clean deploy gomodgen
 
 aws-sam:
-	sam local start-api --template sam-template.yml 
+	AWS_REGION=ap-southeast-1
+	sam local start-api --template sam-template.yml --docker-network local-network --region ap-southeast-1  --warm-containers LAZY  --debug
 
 gomodgen:
 	chmod u+x gomod.sh
@@ -13,7 +14,7 @@ build:
 	env GOOS=linux go build -o bin/hello -ldflags="-s -w" src/handlers/hello/main.go
 	env GOOS=linux go build -o bin/create -ldflags="-s -w" src/handlers/create/main.go
 
-dev: 
+dev-watch: 
 	make build
 	when-changed -r "src" make build
 

@@ -14,8 +14,8 @@ type Request = events.APIGatewayProxyRequest
 func Middify(handler func(request Request) (Response, error)) func(request Request) (Response, error) {
 	return func(request Request) (Response, error) {
 		// Logic to preprocess request here!...
-		fmt.Println(colors.Blue, "middleware: pre-processing...", colors.Reset)
-		fmt.Println(colors.Blue, "proceeding to handler...", colors.Reset)
+		fmt.Println(colors.Green, "middleware: pre-processing...", colors.Reset)
+		fmt.Println(colors.Green, "proceeding to handler...", colors.Reset)
 		response, err := handler(request)
 
 		util.Trace("middleware", "post-processing...")

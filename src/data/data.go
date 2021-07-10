@@ -5,6 +5,7 @@ import (
 	"reflect"
 
 	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
@@ -38,25 +39,31 @@ var currentSession = session.Must(session.NewSession())
 
 var config = aws.NewConfig().
 	WithRegion("ap-southeast-1").
-	WithEndpoint("http://localhost:18000")
+	WithEndpoint("http://host.docker.internal:18000").
+	WithCredentials(
+		credentials.NewStaticCredentials("123", "123", ""),
+	)
 
 // Create DynamoDB Client
 var Client = dynamodb.New(currentSession, config)
 
 // When an existing item found, Put replaces it with the new one
 func (adapter DynamoDBAdapter) Put(tableName string, obj interface{}) (interface{}, error) {
+
 	item, err := dynamodbattribute.MarshalMap(obj)
 	if err != nil {
 		log.Fatalf("Got error marshalling new movie item: %s", err)
 		return nil, err
 	}
 
+	util.Trace("endpoint", *Client.Config.Endpoint)
+
 	input := &dynamodb.PutItemInput{
 		Item:      item,
 		TableName: aws.String(tableName),
 	}
 
-	util.Trace("item", &input)
+	util.Trace("item", &input.Item)
 
 	_, err = Client.PutItem(input)
 	if err != nil {
