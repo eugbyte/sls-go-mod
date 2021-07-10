@@ -32,10 +32,10 @@ Resources:
     Properties: 
       TableName: Book
       AttributeDefinitions: 
-        - AttributeName: id
+        - AttributeName: Id
           AttributeType: S
       KeySchema: 
-        - AttributeName: id
+        - AttributeName: Id
           KeyType: HASH
       ProvisionedThroughput: 
         ReadCapacityUnits: 5

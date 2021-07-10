@@ -2,7 +2,7 @@
 
 aws-sam:
 	AWS_REGION=ap-southeast-1
-	sam local start-api --template sam-template.yml --docker-network local-network --region ap-southeast-1  --warm-containers LAZY  --debug
+	sam local start-api --template sam-template.yml --docker-network local-network --region ap-southeast-1  --debug
 
 gomodgen:
 	chmod u+x gomod.sh
@@ -18,11 +18,23 @@ dev-watch:
 	make build
 	when-changed -r "src" make build
 
+clean:
+	rm -rf ./bin ./vendor go.sum
+
+deploy: clean build
+	sls deploy --verbose
+
 start-db:
 	docker-compose -f src/data/docker-compose.yaml up -d
 
 stop-db:
 	docker-compose -f src/data/docker-compose.yaml down
+
+create-table:
+	aws dynamodb create-table --cli-input-json file://src/data/create_book_table.json --endpoint-url http://localhost:18000
+
+seed-data:
+	aws dynamodb batch-write-item --request-items file://src/data/seed_book_table.json --endpoint-url http://localhost:18000
 
 db-admin:
 	@if [ -z `which dynamodb-admin 2> /dev/null` ]; then \
@@ -31,15 +43,9 @@ db-admin:
 	fi
 	DYNAMO_ENDPOINT=http://localhost:18000 dynamodb-admin
 
-clean:
-	rm -rf ./bin ./vendor go.sum
-
-deploy: clean build
-	sls deploy --verbose
-
-create-table:
-	aws dynamodb create-table --cli-input-json file://src/data/create_book_table.json --endpoint-url http://localhost:18000
-
-seed-data:
-	aws dynamodb batch-write-item --request-items file://src/data/seed_book_table.json --endpoint-url http://localhost:18000
-
+db:
+	make stop-db
+	make start-db
+	make create-table
+	make seed-data
+	make db-admin
