@@ -4,7 +4,6 @@ networks:
   backend:
     name: local-network
 
-
 services:
   dynamodb:
     image: amazon/dynamodb-local
