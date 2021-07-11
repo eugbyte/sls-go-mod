@@ -1,13 +1,13 @@
 # Installation  
-make: `choco install make` | `apt-get install make`  
-file-watcher: `pip install https://github.com/joh/when-changed/archive/master.zip`  
-aws-sam: `aws-sam: https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html`  
-docker: `choco install docker-desktop` | `sudo apt-get install docker-ce docker-ce-cli containerd.io`  
-dynamodb-admin `npm install dynamodb-admin -g`
+<u>make</u>: `choco install make` | `apt-get install make`  
+<u>file-watcher</u>: `pip install https://github.com/joh/when-changed/archive/master.zip`  
+<u>aws-sam</u>: `aws-sam: https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html`  
+<u>docker</u>: `choco install docker-desktop` | `sudo apt-get install docker-ce docker-ce-cli containerd.io`  
+<u>dynamodb-admin</u>: `npm install dynamodb-admin -g`
 
 # Development
 Full list of commands are listed in Makefile 
-If you are on windows, you need to have `git bash` cli to run the commands1
+If you are on windows, you need to have `git bash` cli installed to run the commands1
 
 ## start aws-sam development server  
 `make aws-sam`  
