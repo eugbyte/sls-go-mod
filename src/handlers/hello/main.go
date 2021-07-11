@@ -2,12 +2,13 @@ package main
 
 import (
 	"encoding/json"
+	"log"
+	"net/http"
+	"strings"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
-	"github.com/serverless/sls-go-mod/src/data"
 	"github.com/serverless/sls-go-mod/src/middleware"
-	errs "github.com/serverless/sls-go-mod/src/models/custom_errors"
 	"github.com/serverless/sls-go-mod/src/services/util"
 )
 
@@ -18,24 +19,26 @@ type RequestBody struct {
 }
 
 // Handler is our lambda handler invoked by the `lambda.Start` function call
-func Handler(dynamoDBAdapter data.IDynamoDBAdapter, request Request) (Response, error) {
+func Handler(request Request) (Response, error) {
 
 	util.Trace("body", request.Body)
 
-	// BodyRequest will be used to take the json r esponse from client and build it
+	// BodyRequest will be used to take the json response from client and build it
 	var requestBody RequestBody
 	err := json.Unmarshal([]byte(request.Body), &requestBody)
 	if err != nil {
-		notFoundError := errs.NewBadRequest(err, "cannot unmarshall request.Body")
-		return Response{Body: notFoundError.Error(), StatusCode: notFoundError.StatusCode}, notFoundError
+		log.Fatal("Cannot unmarshall:", err)
+		return Response{Body: err.Error(), StatusCode: http.StatusBadRequest}, err
 	}
 
+	message := requestBody.Message
+	message = strings.ToUpper(message) + "!!"
 	responseBody, err := json.Marshal((map[string]string{
-		"message": requestBody.Message,
+		"message": message,
 	}))
 	if err != nil {
-		internalError := errs.NewInternalServerError(err, "cannot marshall requestBody.Message")
-		return Response{Body: internalError.Error(), StatusCode: internalError.StatusCode}, internalError
+		log.Fatal("Cannot unmarshall:", err)
+		return Response{Body: err.Error(), StatusCode: http.StatusInternalServerError}, err
 	}
 
 	response := Response{
@@ -49,14 +52,8 @@ func Handler(dynamoDBAdapter data.IDynamoDBAdapter, request Request) (Response, 
 	return response, nil
 }
 
-// Dependency injection
-func injectedHandler(request Request) (Response, error) {
-	var dynamoDBAdapter data.IDynamoDBAdapter = data.DynamoDBAdapter{}
-	return Handler(dynamoDBAdapter, request)
-}
-
 func main() {
-	wrappedHandler := middleware.Middify(injectedHandler)
+	wrappedHandler := middleware.Middify(Handler)
 	lambda.Start(wrappedHandler)
 
 }

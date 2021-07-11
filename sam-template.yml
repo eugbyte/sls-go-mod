@@ -1,5 +1,4 @@
 AWSTemplateFormatVersion : '2010-09-09'
-Transform: AWS::Serverless-2016-10-31
 
 Description: A hello world application.
 Resources:
@@ -14,3 +13,59 @@ Resources:
           Properties:
             Path: /hello
             Method: post
+
+  CreateFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: bin/create
+      Runtime: go1.x
+      Events:
+        Vote:
+          Type: Api
+          Properties:
+            Path: /create
+            Method: post 
+      Timeout: 3
+
+
+  ScanAllFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: bin/scanAll
+      Runtime: go1.x
+      Events:
+        Vote:
+          Type: Api
+          Properties:
+            Path: /scan
+            Method: get 
+      Timeout: 3
+
+  GetItemFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: bin/getItem
+      Runtime: go1.x
+      Events:
+        Vote:
+          Type: Api
+          Properties:
+            Path: /getItem/{Id}
+            Method: get 
+      Timeout: 3
+
+  BookTable:
+    Type: AWS::DynamoDB::Table
+    Properties: 
+      TableName: Book
+      AttributeDefinitions: 
+        - AttributeName: Id
+          AttributeType: S
+      KeySchema: 
+        - AttributeName: Id
+          KeyType: HASH
+      ProvisionedThroughput: 
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+      StreamSpecification:
+        StreamViewType: NEW_IMAGE
