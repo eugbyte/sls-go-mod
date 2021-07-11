@@ -25,7 +25,21 @@ Resources:
           Properties:
             Path: /create
             Method: post 
-      Timeout: 7
+      Timeout: 3
+
+
+  ScanFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: bin/scan
+      Runtime: go1.x
+      Events:
+        Vote:
+          Type: Api
+          Properties:
+            Path: /scan
+            Method: get 
+      Timeout: 3
 
   BookTable:
     Type: AWS::DynamoDB::Table

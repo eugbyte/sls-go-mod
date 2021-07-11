@@ -16,8 +16,9 @@ If you are on windows, you need to have `git bash` cli to run the commands1
 Open another terminal  
 `make watch`
 
-## Note
-Also note that if you change the sam-template.yml file, you will have to restart the aws-sam too
+### note
+Only file changes in the src directory is detected.  
+Also note that if you change the sam-template.yml file, you will have to restart aws-sam too
 
 ## start local dynamodb server
 Open another terminal  
@@ -55,3 +56,12 @@ After `make db`, open the browser, and go to http://localhost:8001
 
 ### stop dynamodb local
 `make stop-db`
+
+## getting started with an empty project
+```
+npm install -g serverless
+serverless create --template aws-go-mod --path my-folder```
+```
+Then replace the serverless.yml with the sam-template.yml 
+serverless framework does not yet fully support golang development, e.g. not sls offline dev server  
+Regardless, the generated template is helpful

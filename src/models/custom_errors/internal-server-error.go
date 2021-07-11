@@ -11,11 +11,11 @@ type InternalServerError struct {
 	StatusCode int
 }
 
-func (e *InternalServerError) Error() string {
+func (e InternalServerError) Error() string {
 	return fmt.Sprint("status code: ", e.StatusCode, ".\t", e.Err)
 }
 
-func NewInternalServerError(err error, stackTraceMsg string) BadRequest {
+func NewInternalServerError(err error, stackTraceMsg string) InternalServerError {
 	err = errors.Wrap(err, "stackTrace: "+stackTraceMsg+".\tGo")
-	return BadRequest{Err: err, StatusCode: 500}
+	return InternalServerError{Err: err, StatusCode: 500}
 }

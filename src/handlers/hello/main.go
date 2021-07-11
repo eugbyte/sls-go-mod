@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"strings"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
@@ -29,8 +30,10 @@ func Handler(request Request) (Response, error) {
 		return Response{Body: notFoundError.Error(), StatusCode: notFoundError.StatusCode}, notFoundError
 	}
 
+	message := requestBody.Message
+	message = strings.ToUpper(message) + "!!"
 	responseBody, err := json.Marshal((map[string]string{
-		"message": requestBody.Message + "!!",
+		"message": message,
 	}))
 	if err != nil {
 		internalError := errs.NewInternalServerError(err, "cannot marshall requestBody.Message")

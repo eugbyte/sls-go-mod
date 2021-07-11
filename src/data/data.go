@@ -10,7 +10,6 @@ import (
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
 	"github.com/aws/aws-sdk-go/service/dynamodb/expression"
-	"github.com/jinzhu/copier"
 	"github.com/pkg/errors"
 	"github.com/serverless/sls-go-mod/src/services/util"
 )
@@ -22,10 +21,10 @@ type DynamoDBAdapter struct {
 
 type IDynamoDBAdapter interface {
 	Put(tableName string, obj interface{}) (interface{}, error)
-	Read(tableName string, key Attributes, outPointer *interface{}) error
+	GetItem(tableName string, key Attributes, outPointer *interface{}) error
 	Update(updateInput *dynamodb.UpdateItemInput) error
-	Delete(tableName string, key map[string]*dynamodb.AttributeValue) error
-	Scan(tableName string, expr expression.Expression, emptyObj interface{}) ([]interface{}, error)
+	Delete(tableName string, key Attributes) error
+	Scan(tableName string, expr expression.Expression, outslice interface{}) error
 }
 
 // Initialize a session that the SDK will use to load
@@ -75,9 +74,9 @@ func (adapter DynamoDBAdapter) Put(tableName string, obj interface{}) (interface
 	return obj, nil
 }
 
-func (adapter DynamoDBAdapter) Read(tableName string, key Attributes, outPointer *interface{}) error {
+func (adapter DynamoDBAdapter) GetItem(tableName string, key Attributes, outPointer *interface{}) error {
 
-	if reflect.ValueOf(outPointer).Kind() == reflect.Ptr {
+	if reflect.ValueOf(outPointer).Kind() != reflect.Ptr {
 		err := errors.New("out argument must be a pointer")
 		log.Fatalf(err.Error())
 		return err
@@ -118,7 +117,7 @@ func (adapter DynamoDBAdapter) Update(updateInput *dynamodb.UpdateItemInput) err
 	return nil
 }
 
-func (adapter DynamoDBAdapter) Delete(tableName string, key map[string]*dynamodb.AttributeValue) error {
+func (adapter DynamoDBAdapter) Delete(tableName string, key Attributes) error {
 	deleteInput := &dynamodb.DeleteItemInput{
 		Key:       key,
 		TableName: &tableName,
@@ -131,7 +130,13 @@ func (adapter DynamoDBAdapter) Delete(tableName string, key map[string]*dynamodb
 	return nil
 }
 
-func (adapter DynamoDBAdapter) Scan(tableName string, expr expression.Expression, emptyObj interface{}) ([]interface{}, error) {
+func (adapter DynamoDBAdapter) Scan(tableName string, expr expression.Expression, outslice interface{}) error {
+
+	if reflect.ValueOf(outslice).Kind() != reflect.Ptr {
+		err := errors.New("out argument must be a pointer")
+		log.Fatalf(err.Error())
+		return err
+	}
 
 	params := &dynamodb.ScanInput{
 		ExpressionAttributeNames:  expr.Names(),
@@ -144,27 +149,11 @@ func (adapter DynamoDBAdapter) Scan(tableName string, expr expression.Expression
 	result, err := Client.Scan(params)
 	if err != nil {
 		error := errors.Errorf("Got error calling Scan")
-		return nil, error
+		return error
 	}
 
 	items := result.Items
-	count := len(items)
+	dynamodbattribute.UnmarshalListOfMaps(items, outslice)
 
-	// Initialize empty slice with empty objs
-	objs := make([]interface{}, count)
-
-	for i := 0; i < count; i++ {
-		var copyObj interface{}
-		copier.Copy(copyObj, emptyObj)
-		objs[i] = copyObj
-	}
-
-	for i, value := range items {
-		err = dynamodbattribute.UnmarshalMap(value, &objs[i])
-		if err != nil {
-			log.Fatalf("Got error unmarshalling: %s", err)
-		}
-	}
-
-	return objs, err
+	return err
 }
