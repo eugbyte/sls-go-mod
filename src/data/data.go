@@ -38,10 +38,10 @@ var currentSession = session.Must(session.NewSession())
 
 var config = aws.NewConfig().
 	WithRegion("ap-southeast-1").
-	WithEndpoint("http://host.docker.internal:18000").
 	WithCredentials(
 		credentials.NewStaticCredentials("123", "123", ""),
-	)
+	).
+	WithEndpoint("http://host.docker.internal:18000")
 
 // Create DynamoDB Client
 var Client = dynamodb.New(currentSession, config)

@@ -1,3 +1,6 @@
+# About
+serverless lambda in golang with aws dynamodb local 
+
 # Installation  
 <ins>make</ins>: `choco install make` | `apt-get install make`  
 <ins>file-watcher</ins>: `pip install https://github.com/joh/when-changed/archive/master.zip`  
