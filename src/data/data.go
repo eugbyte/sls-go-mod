@@ -21,7 +21,7 @@ type DynamoDBAdapter struct {
 
 type IDynamoDBAdapter interface {
 	Put(tableName string, obj interface{}) (interface{}, error)
-	GetItem(tableName string, key Attributes, outPointer *interface{}) error
+	GetItem(tableName string, key Attributes, outPointer interface{}) error
 	Update(updateInput *dynamodb.UpdateItemInput) error
 	Delete(tableName string, key Attributes) error
 	Scan(tableName string, expr expression.Expression, outslice interface{}) error
@@ -66,7 +66,6 @@ func (adapter DynamoDBAdapter) Put(tableName string, obj interface{}) (interface
 
 	_, err = Client.PutItem(input)
 	if err != nil {
-		util.LogError("dynamodb error")
 		log.Fatalf("Got error calling PutItem: %s", err)
 		return nil, err
 	}
@@ -74,7 +73,7 @@ func (adapter DynamoDBAdapter) Put(tableName string, obj interface{}) (interface
 	return obj, nil
 }
 
-func (adapter DynamoDBAdapter) GetItem(tableName string, key Attributes, outPointer *interface{}) error {
+func (adapter DynamoDBAdapter) GetItem(tableName string, key Attributes, outPointer interface{}) error {
 
 	if reflect.ValueOf(outPointer).Kind() != reflect.Ptr {
 		err := errors.New("out argument must be a pointer")

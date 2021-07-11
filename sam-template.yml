@@ -28,16 +28,29 @@ Resources:
       Timeout: 3
 
 
-  ScanFunction:
+  ScanAllFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: bin/scan
+      Handler: bin/scanAll
       Runtime: go1.x
       Events:
         Vote:
           Type: Api
           Properties:
             Path: /scan
+            Method: get 
+      Timeout: 3
+
+  GetItemFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: bin/getItem
+      Runtime: go1.x
+      Events:
+        Vote:
+          Type: Api
+          Properties:
+            Path: /getItem/{Id}
             Method: get 
       Timeout: 3
 

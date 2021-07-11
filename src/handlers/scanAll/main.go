@@ -3,13 +3,13 @@ package main
 import (
 	"encoding/json"
 	"log"
-
-	errs "github.com/serverless/sls-go-mod/src/models/custom_errors"
+	"net/http"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/expression"
+	"github.com/pkg/errors"
 	"github.com/serverless/sls-go-mod/src/data"
 	"github.com/serverless/sls-go-mod/src/middleware"
 	"github.com/serverless/sls-go-mod/src/models"
@@ -20,20 +20,20 @@ type Request = events.APIGatewayProxyRequest
 type Attributes = map[string]*dynamodb.AttributeValue
 
 func Handler(dynamoDBAdapter data.IDynamoDBAdapter, request Request) (Response, error) {
-	exprsn, err := expression.NewBuilder().Build()
-	if err != nil {
-		log.Fatal("Got error building expression" + err.Error())
-		internalError := errs.NewInternalServerError(err, "Got error building expression")
-		return Response{Body: internalError.Error(), StatusCode: 500}, err
-	}
+
+	// unfortunately, doing just expression.NewBuilder().Build(), without need at least one expression, e.g. .WithFilter(), returns an error
+	// this error can be ignored
+	// https://github.com/aws/aws-sdk-go/blob/7798c2e0edc02ba058f7672d32f4ebf6603b5fc6/service/dynamodb/expression/expression.go#L101
+	expr, _ := expression.NewBuilder().Build()
 
 	var books []models.Book
-	err = dynamoDBAdapter.Scan("Book", exprsn, &books)
+	err := dynamoDBAdapter.Scan("Book", expr, &books)
 
 	responseBody, err := json.Marshal(books)
 	if err != nil {
-		internalError := errs.NewInternalServerError(err, "cannot marshall requestBody")
-		return Response{Body: internalError.Error(), StatusCode: internalError.StatusCode}, internalError
+		err = errors.Wrap(err, "cannot scan")
+		log.Fatal(err)
+		return Response{Body: err.Error(), StatusCode: http.StatusBadRequest}, err
 	}
 
 	response := Response{
@@ -45,17 +45,14 @@ func Handler(dynamoDBAdapter data.IDynamoDBAdapter, request Request) (Response, 
 		},
 	}
 	return response, nil
-
 }
 
 // Dependency injection
 func injectedHandler(request Request) (Response, error) {
-	var dynamoDBAdapter data.IDynamoDBAdapter = data.DynamoDBAdapter{}
-	return Handler(dynamoDBAdapter, request)
+	return Handler(data.DynamoDBAdapter{}, request)
 }
 
 func main() {
 	wrappedHandler := middleware.Middify(injectedHandler)
 	lambda.Start(wrappedHandler)
-
 }

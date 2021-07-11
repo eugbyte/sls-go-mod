@@ -11,7 +11,8 @@ build:
 	export GO111MODULE=on
 	env GOOS=linux go build -o bin/hello -ldflags="-s -w" src/handlers/hello/main.go
 	env GOOS=linux go build -o bin/create -ldflags="-s -w" src/handlers/create/main.go
-	env GOOS=linux go build -o bin/scan -ldflags="-s -w" src/handlers/scan/main.go
+	env GOOS=linux go build -o bin/scanAll -ldflags="-s -w" src/handlers/scanAll/main.go
+	env GOOS=linux go build -o bin/getItem -ldflags="-s -w" src/handlers/getItem/main.go
 
 watch: 
 	make build

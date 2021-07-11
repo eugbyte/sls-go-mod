@@ -2,12 +2,13 @@ package main
 
 import (
 	"encoding/json"
+	"log"
+	"net/http"
 	"strings"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/serverless/sls-go-mod/src/middleware"
-	errs "github.com/serverless/sls-go-mod/src/models/custom_errors"
 	"github.com/serverless/sls-go-mod/src/services/util"
 )
 
@@ -26,8 +27,8 @@ func Handler(request Request) (Response, error) {
 	var requestBody RequestBody
 	err := json.Unmarshal([]byte(request.Body), &requestBody)
 	if err != nil {
-		notFoundError := errs.NewBadRequest(err, "cannot unmarshall request.Body")
-		return Response{Body: notFoundError.Error(), StatusCode: notFoundError.StatusCode}, notFoundError
+		log.Fatal("Cannot unmarshall:", err)
+		return Response{Body: err.Error(), StatusCode: http.StatusBadRequest}, err
 	}
 
 	message := requestBody.Message
@@ -36,8 +37,8 @@ func Handler(request Request) (Response, error) {
 		"message": message,
 	}))
 	if err != nil {
-		internalError := errs.NewInternalServerError(err, "cannot marshall requestBody.Message")
-		return Response{Body: internalError.Error(), StatusCode: internalError.StatusCode}, internalError
+		log.Fatal("Cannot unmarshall:", err)
+		return Response{Body: err.Error(), StatusCode: http.StatusInternalServerError}, err
 	}
 
 	response := Response{

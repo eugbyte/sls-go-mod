@@ -7,7 +7,8 @@ import (
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
-	"github.com/google/uuid"
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/pkg/errors"
 	"github.com/serverless/sls-go-mod/src/data"
 	"github.com/serverless/sls-go-mod/src/middleware"
@@ -17,33 +18,36 @@ import (
 
 type Response = events.APIGatewayProxyResponse
 type Request = events.APIGatewayProxyRequest
+type Attributes = map[string]*dynamodb.AttributeValue
 
 func Handler(dynamoDBAdapter data.IDynamoDBAdapter, request Request) (Response, error) {
+	var Id string = request.PathParameters["Id"]
+	util.Trace("Id", Id)
 
-	util.Trace("body", request.Body)
+	key := Attributes{
+		"Id": {
+			S: aws.String("b837f889-acf9-4c17-9cea-1edd8fd2058f"),
+		},
+	}
 
 	var book models.Book
-	err := json.Unmarshal([]byte(request.Body), &book)
+	err := dynamoDBAdapter.GetItem("Book", key, &book)
 	if err != nil {
-		err = errors.Wrap(err, "Cannot unmarshall")
+		err = errors.Wrap(err, "Cannot find book: "+Id)
 		log.Fatal(err)
 		return Response{Body: err.Error(), StatusCode: http.StatusBadRequest}, err
 	}
 
-	book.Id = uuid.New().String()
-	util.Trace("book", book)
-
-	_, err = dynamoDBAdapter.Put("Book", book)
+	responseBody, err := json.Marshal(book)
 	if err != nil {
-		err = errors.Wrap(err, "cannot put book")
-		log.Fatal(err)
+		log.Fatal("Cannot unmarshall:", err)
 		return Response{Body: err.Error(), StatusCode: http.StatusInternalServerError}, err
 	}
 
 	response := Response{
 		StatusCode:      200,
 		IsBase64Encoded: false,
-		Body:            string(request.Body),
+		Body:            string(responseBody),
 		Headers: map[string]string{
 			"Content-Type": "application/json",
 		},
