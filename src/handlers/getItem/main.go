@@ -26,7 +26,7 @@ func Handler(dynamoDBAdapter data.IDynamoDBAdapter, request Request) (Response, 
 
 	key := Attributes{
 		"Id": {
-			S: aws.String("b837f889-acf9-4c17-9cea-1edd8fd2058f"),
+			S: aws.String(Id),
 		},
 	}
 

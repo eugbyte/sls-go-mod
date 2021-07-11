@@ -24,17 +24,17 @@ clean:
 deploy: clean build
 	sls deploy --verbose
 
-start-db:
-	docker-compose -f src/data/docker-compose.yaml up -d
+db-start:
+	docker-compose -f src/data/seed/docker-compose.yaml up -d
 
-stop-db:
-	docker-compose -f src/data/docker-compose.yaml down
+db-stop:
+	docker-compose -f src/data/seed/docker-compose.yaml down
 
-create-table:
-	aws dynamodb create-table --cli-input-json file://src/data/create_book_table.json --endpoint-url http://localhost:18000 >/dev/null 2>&1
+db-create-table:
+	aws dynamodb create-table --cli-input-json file://src/data/seed/create_book_table.json --endpoint-url http://localhost:18000 >/dev/null 2>&1
 
-seed-data:
-	aws dynamodb batch-write-item --request-items file://src/data/seed_book_table.json --endpoint-url http://localhost:18000
+db-seed-data:
+	aws dynamodb batch-write-item --request-items file://src/data/seed/seed_book_table.json --endpoint-url http://localhost:18000
 
 db-admin:
 	@if [ -z `which dynamodb-admin 2> /dev/null` ]; then \
@@ -44,8 +44,8 @@ db-admin:
 	DYNAMO_ENDPOINT=http://localhost:18000 dynamodb-admin
 
 db:
-	make stop-db || echo "db already stopped"
-	make start-db
-	make create-table 
-	make seed-data
+	make db-stop || echo "db already stopped"
+	make db-start
+	make db-create-table 
+	make db-seed-data
 	make db-admin
