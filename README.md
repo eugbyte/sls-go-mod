@@ -1,9 +1,9 @@
 # Installation  
-<u>make</u>: `choco install make` | `apt-get install make`  
-<u>file-watcher</u>: `pip install https://github.com/joh/when-changed/archive/master.zip`  
-<u>aws-sam</u>: `aws-sam: https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html`  
-<u>docker</u>: `choco install docker-desktop` | `sudo apt-get install docker-ce docker-ce-cli containerd.io`  
-<u>dynamodb-admin</u>: `npm install dynamodb-admin -g`
+<ins>make</ins>: `choco install make` | `apt-get install make`  
+<ins>file-watcher</ins>: `pip install https://github.com/joh/when-changed/archive/master.zip`  
+<ins>aws-sam</ins>: `aws-sam: https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html`  
+<ins>docker</ins>: `choco install docker-desktop` | `sudo apt-get install docker-ce docker-ce-cli containerd.io`  
+<ins>dynamodb-admin</ins>: `npm install dynamodb-admin -g`
 
 # Development
 Full list of commands are listed in Makefile 
@@ -18,7 +18,7 @@ Open another terminal
 
 ### note
 Only file changes in the src directory is detected.  
-Also note that if you change the sam-template.yml file, you will have to restart aws-sam too
+Also note that if you change the sam-template.yml file, you will have to restart the aws-sam development server too
 
 ## start local dynamodb server
 Open another terminal  
@@ -57,7 +57,7 @@ After `make db`, open the browser, and go to http://localhost:8001
 ### stop dynamodb local
 `make stop-db`
 
-## getting started with an empty project
+# Starting with an empty project template
 ```
 npm install -g serverless
 serverless create --template aws-go-mod --path my-folder```
