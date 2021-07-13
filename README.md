@@ -65,6 +65,6 @@ After `make db`, open the browser, and go to http://localhost:8001
 npm install -g serverless
 serverless create --template aws-go-mod --path my-folder```
 ```
-Then replace the serverless.yml with the sam-template.yml 
-serverless framework does not yet fully support golang development, e.g. not sls offline dev server  
+Then replace the `serverless.yml` with the `sam-template.yml` 
+serverless framework does not yet fully support golang development, e.g. no sls offline dev server  
 Regardless, the generated template is helpful

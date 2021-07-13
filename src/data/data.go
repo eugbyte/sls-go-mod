@@ -120,6 +120,7 @@ func (adapter DynamoDBAdapter) Delete(tableName string, key Attributes) error {
 	deleteInput := &dynamodb.DeleteItemInput{
 		Key:       key,
 		TableName: &tableName,
+		// ConditionExpression: aws.String(conditionExpression),
 	}
 	_, err := Client.DeleteItem(deleteInput)
 	if err != nil {
