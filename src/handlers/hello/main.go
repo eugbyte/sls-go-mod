@@ -33,18 +33,21 @@ func Handler(request Request) (Response, error) {
 
 	message := requestBody.Message
 	message = strings.ToUpper(message) + "!!"
-	responseBody, err := json.Marshal((map[string]string{
+	// responseBody, err := json.Marshal((map[string]string{
+	// 	"message": message,
+	// }))
+	// if err != nil {
+	// 	log.Fatal("Cannot unmarshall:", err)
+	// 	return Response{Body: err.Error(), StatusCode: http.StatusInternalServerError}, err
+	// }
+	responseBody := util.Stringify(map[string]string{
 		"message": message,
-	}))
-	if err != nil {
-		log.Fatal("Cannot unmarshall:", err)
-		return Response{Body: err.Error(), StatusCode: http.StatusInternalServerError}, err
-	}
+	})
 
 	response := Response{
 		StatusCode:      200,
 		IsBase64Encoded: false,
-		Body:            string(responseBody),
+		Body:            responseBody,
 		Headers: map[string]string{
 			"Content-Type": "application/json",
 		},

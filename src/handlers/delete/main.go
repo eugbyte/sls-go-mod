@@ -48,14 +48,14 @@ func Handler(dynamoDBAdapter data.IDynamoDBAdapter, request Request) (Response, 
 		return Response{Body: err.Error(), StatusCode: http.StatusInternalServerError}, err
 	}
 
-	responseBody, _ := json.Marshal(map[string]string{
+	responseBody := util.Stringify(map[string]string{
 		"message": fmt.Sprintf("item %s succesfully deleted", Id),
 	})
 
 	response := Response{
 		StatusCode:      200,
 		IsBase64Encoded: false,
-		Body:            string(responseBody),
+		Body:            responseBody,
 		Headers: map[string]string{
 			"Content-Type": "application/json",
 		},

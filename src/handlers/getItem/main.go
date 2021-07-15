@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"log"
 	"net/http"
 
@@ -38,16 +37,12 @@ func Handler(dynamoDBAdapter data.IDynamoDBAdapter, request Request) (Response, 
 		return Response{Body: err.Error(), StatusCode: http.StatusBadRequest}, err
 	}
 
-	responseBody, err := json.Marshal(book)
-	if err != nil {
-		log.Fatal("Cannot unmarshall:", err)
-		return Response{Body: err.Error(), StatusCode: http.StatusInternalServerError}, err
-	}
+	responseBody := util.Stringify(book)
 
 	response := Response{
 		StatusCode:      200,
 		IsBase64Encoded: false,
-		Body:            string(responseBody),
+		Body:            responseBody,
 		Headers: map[string]string{
 			"Content-Type": "application/json",
 		},

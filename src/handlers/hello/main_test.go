@@ -10,7 +10,7 @@ import (
 func TestHandler(t *testing.T) {
 	mockRequest := Request{}
 
-	mockRequest.Body = util.Stringyfy(RequestBody{Message: "Hello"})
+	mockRequest.Body = util.Stringify(RequestBody{Message: "Hello"})
 	response, err := Handler(mockRequest)
 	if err != nil {
 		t.Errorf("An error occured in Handler %v", err)
@@ -23,7 +23,7 @@ func TestHandler(t *testing.T) {
 	}
 	message := messageNap["message"]
 	if messageNap["message"] != "Hello!!" {
-		t.Logf("test failed. Expected %v, received %v", message, "Hello!!")
+		t.Errorf("test failed. Expected %v, received %v", message, "Hello!!")
 	} else {
 		t.Logf("test passed. Expected %v, received %v", message, "Hello!!")
 	}
