@@ -27,6 +27,9 @@ watch:
 	make build
 	when-changed -r "./src" make build
 
+test-handlers:
+	go test ./src/handlers/...
+
 #----DYNAMODB LOCAL----
 
 db-start:

@@ -65,7 +65,7 @@ func Handler(dynamoDBAdapter data.IDynamoDBAdapter, request Request) (Response, 
 
 // Dependency injection
 func injectedHandler(request Request) (Response, error) {
-	return Handler(data.DynamoDBAdapter{}, request)
+	return Handler(&data.DynamoDBAdapter{}, request)
 }
 
 func main() {

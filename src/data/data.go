@@ -47,7 +47,7 @@ var config = aws.NewConfig().
 var Client = dynamodb.New(currentSession, config)
 
 // When an existing item found, Put replaces it with the new one
-func (adapter DynamoDBAdapter) Put(tableName string, obj interface{}) (interface{}, error) {
+func (adapter *DynamoDBAdapter) Put(tableName string, obj interface{}) (interface{}, error) {
 
 	item, err := dynamodbattribute.MarshalMap(obj)
 	if err != nil {
@@ -73,7 +73,7 @@ func (adapter DynamoDBAdapter) Put(tableName string, obj interface{}) (interface
 	return obj, nil
 }
 
-func (adapter DynamoDBAdapter) GetItem(tableName string, key Attributes, outPointer interface{}) error {
+func (adapter *DynamoDBAdapter) GetItem(tableName string, key Attributes, outPointer interface{}) error {
 
 	if reflect.ValueOf(outPointer).Kind() != reflect.Ptr {
 		err := errors.New("out argument must be a pointer")
@@ -106,7 +106,7 @@ func (adapter DynamoDBAdapter) GetItem(tableName string, key Attributes, outPoin
 	return nil
 }
 
-func (adapter DynamoDBAdapter) Update(updateInput *dynamodb.UpdateItemInput) error {
+func (adapter *DynamoDBAdapter) Update(updateInput *dynamodb.UpdateItemInput) error {
 
 	_, err := Client.UpdateItem(updateInput)
 	if err != nil {
@@ -116,7 +116,7 @@ func (adapter DynamoDBAdapter) Update(updateInput *dynamodb.UpdateItemInput) err
 	return nil
 }
 
-func (adapter DynamoDBAdapter) Delete(tableName string, key Attributes) error {
+func (adapter *DynamoDBAdapter) Delete(tableName string, key Attributes) error {
 	deleteInput := &dynamodb.DeleteItemInput{
 		Key:       key,
 		TableName: &tableName,
@@ -130,7 +130,7 @@ func (adapter DynamoDBAdapter) Delete(tableName string, key Attributes) error {
 	return nil
 }
 
-func (adapter DynamoDBAdapter) Scan(tableName string, expr expression.Expression, outslice interface{}) error {
+func (adapter *DynamoDBAdapter) Scan(tableName string, expr expression.Expression, outslice interface{}) error {
 
 	if reflect.ValueOf(outslice).Kind() != reflect.Ptr {
 		err := errors.New("out argument must be a pointer")
