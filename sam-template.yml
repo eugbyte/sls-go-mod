@@ -54,6 +54,19 @@ Resources:
             Method: get 
       Timeout: 3
 
+  DeleteFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: bin/delete
+      Runtime: go1.x
+      Events:
+        Vote:
+          Type: Api
+          Properties:
+            Path: /delete
+            Method: post
+      Timeout: 3
+
   BookTable:
     Type: AWS::DynamoDB::Table
     Properties: 

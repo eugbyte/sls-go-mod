@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"log"
 	"net/http"
 
@@ -13,6 +12,7 @@ import (
 	"github.com/serverless/sls-go-mod/src/data"
 	"github.com/serverless/sls-go-mod/src/middleware"
 	"github.com/serverless/sls-go-mod/src/models"
+	"github.com/serverless/sls-go-mod/src/services/util"
 )
 
 type Response = events.APIGatewayProxyResponse
@@ -28,18 +28,18 @@ func Handler(dynamoDBAdapter data.IDynamoDBAdapter, request Request) (Response, 
 
 	var books []models.Book
 	err := dynamoDBAdapter.Scan("Book", expr, &books)
-
-	responseBody, err := json.Marshal(books)
 	if err != nil {
 		err = errors.Wrap(err, "cannot scan")
 		log.Fatal(err)
 		return Response{Body: err.Error(), StatusCode: http.StatusBadRequest}, err
 	}
 
+	responseBody := util.Stringify(books)
+
 	response := Response{
 		StatusCode:      200,
 		IsBase64Encoded: false,
-		Body:            string(responseBody),
+		Body:            responseBody,
 		Headers: map[string]string{
 			"Content-Type": "application/json",
 		},
@@ -49,7 +49,7 @@ func Handler(dynamoDBAdapter data.IDynamoDBAdapter, request Request) (Response, 
 
 // Dependency injection
 func injectedHandler(request Request) (Response, error) {
-	return Handler(data.DynamoDBAdapter{}, request)
+	return Handler(&data.DynamoDBAdapter{}, request)
 }
 
 func main() {
