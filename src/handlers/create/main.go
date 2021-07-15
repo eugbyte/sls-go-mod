@@ -39,7 +39,7 @@ func Handler(dynamoDBAdapter data.IDynamoDBAdapter, request Request) (Response, 
 	}
 
 	response := Response{
-		StatusCode:      200,
+		StatusCode:      201,
 		IsBase64Encoded: false,
 		Body:            string(request.Body),
 		Headers: map[string]string{

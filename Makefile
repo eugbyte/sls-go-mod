@@ -28,7 +28,7 @@ watch:
 	when-changed -r "./src" make build
 
 test-handlers:
-	go test ./src/handlers/...
+	go test -v ./src/handlers/...
 
 #----DYNAMODB LOCAL----
 
