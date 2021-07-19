@@ -41,7 +41,8 @@ func Handler(dynamoDBAdapter data.IDynamoDBAdapter, request Request) (Response, 
 		},
 	}
 
-	err = dynamoDBAdapter.Delete("Book", key)
+	conditionExpression := fmt.Sprintf("ID = '%s' ", Id)
+	err = dynamoDBAdapter.Delete("Book", key, aws.String(conditionExpression))
 	if err != nil {
 		err = errors.Wrap(err, "cannot delete item")
 		log.Fatal(err)

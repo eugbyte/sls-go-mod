@@ -23,7 +23,7 @@ type IDynamoDBAdapter interface {
 	Put(tableName string, obj interface{}) (interface{}, error)
 	GetItem(tableName string, key Attributes, outPointer interface{}) error
 	Update(updateInput *dynamodb.UpdateItemInput) error
-	Delete(tableName string, key Attributes) error
+	Delete(tableName string, key Attributes, conditionExpression *string) error
 	Scan(tableName string, expr expression.Expression, outslice interface{}) error
 }
 
@@ -110,21 +110,21 @@ func (adapter *DynamoDBAdapter) Update(updateInput *dynamodb.UpdateItemInput) er
 
 	_, err := Client.UpdateItem(updateInput)
 	if err != nil {
-		error := errors.Errorf("Got error calling UpdateItem")
+		error := errors.Errorf("Got error calling UpdateItem", err)
 		return error
 	}
 	return nil
 }
 
-func (adapter *DynamoDBAdapter) Delete(tableName string, key Attributes) error {
+func (adapter *DynamoDBAdapter) Delete(tableName string, key Attributes, conditionExpression *string) error {
 	deleteInput := &dynamodb.DeleteItemInput{
-		Key:       key,
-		TableName: &tableName,
-		// ConditionExpression: aws.String(conditionExpression),
+		Key:                 key,
+		TableName:           &tableName,
+		ConditionExpression: conditionExpression,
 	}
 	_, err := Client.DeleteItem(deleteInput)
 	if err != nil {
-		error := errors.Errorf("Got error calling UpdateItem")
+		error := errors.Errorf("Got error calling Delete", err)
 		return error
 	}
 	return nil
