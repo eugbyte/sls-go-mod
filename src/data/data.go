@@ -11,7 +11,6 @@ import (
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
 	"github.com/aws/aws-sdk-go/service/dynamodb/expression"
 	"github.com/pkg/errors"
-	"github.com/serverless/sls-go-mod/src/services/util"
 )
 
 type Attributes = map[string]*dynamodb.AttributeValue
@@ -20,10 +19,10 @@ type DynamoDBAdapter struct {
 }
 
 type IDynamoDBAdapter interface {
-	Put(tableName string, obj interface{}) (interface{}, error)
+	Put(tableName string, obj interface{}, condtionExpression *string) (interface{}, error)
 	GetItem(tableName string, key Attributes, outPointer interface{}) error
 	Update(updateInput *dynamodb.UpdateItemInput) error
-	Delete(tableName string, key Attributes) error
+	Delete(tableName string, key Attributes, conditionExpression *string) error
 	Scan(tableName string, expr expression.Expression, outslice interface{}) error
 }
 
@@ -47,7 +46,7 @@ var config = aws.NewConfig().
 var Client = dynamodb.New(currentSession, config)
 
 // When an existing item found, Put replaces it with the new one
-func (adapter *DynamoDBAdapter) Put(tableName string, obj interface{}) (interface{}, error) {
+func (adapter *DynamoDBAdapter) Put(tableName string, obj interface{}, condtionExpression *string) (interface{}, error) {
 
 	item, err := dynamodbattribute.MarshalMap(obj)
 	if err != nil {
@@ -55,14 +54,11 @@ func (adapter *DynamoDBAdapter) Put(tableName string, obj interface{}) (interfac
 		return nil, err
 	}
 
-	util.Trace("endpoint", *Client.Config.Endpoint)
-
 	input := &dynamodb.PutItemInput{
-		Item:      item,
-		TableName: aws.String(tableName),
+		Item:                item,
+		TableName:           aws.String(tableName),
+		ConditionExpression: condtionExpression,
 	}
-
-	util.Trace("item", &input.Item)
 
 	_, err = Client.PutItem(input)
 	if err != nil {
@@ -110,21 +106,23 @@ func (adapter *DynamoDBAdapter) Update(updateInput *dynamodb.UpdateItemInput) er
 
 	_, err := Client.UpdateItem(updateInput)
 	if err != nil {
-		error := errors.Errorf("Got error calling UpdateItem")
+		error := errors.Errorf("Got error calling UpdateItem", err)
 		return error
 	}
 	return nil
 }
 
-func (adapter *DynamoDBAdapter) Delete(tableName string, key Attributes) error {
+// conditionExpression - optional, can set to nil
+// expressionAttributeNames - optional, can set to nil
+func (adapter *DynamoDBAdapter) Delete(tableName string, key Attributes, conditionExpression *string) error {
 	deleteInput := &dynamodb.DeleteItemInput{
-		Key:       key,
-		TableName: &tableName,
-		// ConditionExpression: aws.String(conditionExpression),
+		Key:                 key,
+		TableName:           &tableName,
+		ConditionExpression: conditionExpression,
 	}
 	_, err := Client.DeleteItem(deleteInput)
 	if err != nil {
-		error := errors.Errorf("Got error calling UpdateItem")
+		error := errors.Errorf("Got error calling Delete", err)
 		return error
 	}
 	return nil

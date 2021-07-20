@@ -9,7 +9,6 @@ import (
 
 func TestHandler(t *testing.T) {
 	mockRequest := Request{}
-
 	mockRequest.Body = util.Stringify(RequestBody{Message: "Hello"})
 	response, err := Handler(mockRequest)
 	if err != nil {

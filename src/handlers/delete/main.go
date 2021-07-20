@@ -41,7 +41,9 @@ func Handler(dynamoDBAdapter data.IDynamoDBAdapter, request Request) (Response, 
 		},
 	}
 
-	err = dynamoDBAdapter.Delete("Book", key)
+	conditionExpression := "attribute_exists(Id)"
+
+	err = dynamoDBAdapter.Delete("Book", key, &conditionExpression)
 	if err != nil {
 		err = errors.Wrap(err, "cannot delete item")
 		log.Fatal(err)

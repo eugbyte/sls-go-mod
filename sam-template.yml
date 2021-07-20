@@ -14,16 +14,16 @@ Resources:
             Path: /hello
             Method: post
 
-  CreateFunction:
+  PutItemFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: bin/create
+      Handler: bin/putItem
       Runtime: go1.x
       Events:
         Vote:
           Type: Api
           Properties:
-            Path: /create
+            Path: /putItem
             Method: post 
       Timeout: 3
 
