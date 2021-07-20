@@ -11,7 +11,6 @@ import (
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
 	"github.com/aws/aws-sdk-go/service/dynamodb/expression"
 	"github.com/pkg/errors"
-	"github.com/serverless/sls-go-mod/src/services/util"
 )
 
 type Attributes = map[string]*dynamodb.AttributeValue
@@ -55,15 +54,11 @@ func (adapter *DynamoDBAdapter) Put(tableName string, obj interface{}, condtionE
 		return nil, err
 	}
 
-	util.Trace("endpoint", *Client.Config.Endpoint)
-
 	input := &dynamodb.PutItemInput{
 		Item:                item,
 		TableName:           aws.String(tableName),
 		ConditionExpression: condtionExpression,
 	}
-
-	util.Trace("item", &input.Item)
 
 	_, err = Client.PutItem(input)
 	if err != nil {
