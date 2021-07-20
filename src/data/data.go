@@ -20,7 +20,7 @@ type DynamoDBAdapter struct {
 }
 
 type IDynamoDBAdapter interface {
-	Put(tableName string, obj interface{}) (interface{}, error)
+	Put(tableName string, obj interface{}, condtionExpression *string) (interface{}, error)
 	GetItem(tableName string, key Attributes, outPointer interface{}) error
 	Update(updateInput *dynamodb.UpdateItemInput) error
 	Delete(tableName string, key Attributes, conditionExpression *string) error
@@ -47,7 +47,7 @@ var config = aws.NewConfig().
 var Client = dynamodb.New(currentSession, config)
 
 // When an existing item found, Put replaces it with the new one
-func (adapter *DynamoDBAdapter) Put(tableName string, obj interface{}) (interface{}, error) {
+func (adapter *DynamoDBAdapter) Put(tableName string, obj interface{}, condtionExpression *string) (interface{}, error) {
 
 	item, err := dynamodbattribute.MarshalMap(obj)
 	if err != nil {
@@ -58,8 +58,9 @@ func (adapter *DynamoDBAdapter) Put(tableName string, obj interface{}) (interfac
 	util.Trace("endpoint", *Client.Config.Endpoint)
 
 	input := &dynamodb.PutItemInput{
-		Item:      item,
-		TableName: aws.String(tableName),
+		Item:                item,
+		TableName:           aws.String(tableName),
+		ConditionExpression: condtionExpression,
 	}
 
 	util.Trace("item", &input.Item)
@@ -116,6 +117,8 @@ func (adapter *DynamoDBAdapter) Update(updateInput *dynamodb.UpdateItemInput) er
 	return nil
 }
 
+// conditionExpression - optional, can set to nil
+// expressionAttributeNames - optional, can set to nil
 func (adapter *DynamoDBAdapter) Delete(tableName string, key Attributes, conditionExpression *string) error {
 	deleteInput := &dynamodb.DeleteItemInput{
 		Key:                 key,
