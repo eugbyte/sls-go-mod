@@ -4,8 +4,8 @@ import (
 	"testing"
 
 	"github.com/serverless/sls-go-mod/src/data"
+	"github.com/serverless/sls-go-mod/src/lib/util"
 	"github.com/serverless/sls-go-mod/src/models"
-	"github.com/serverless/sls-go-mod/src/services/util"
 )
 
 func TestHandler(t *testing.T) {

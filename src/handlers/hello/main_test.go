@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/serverless/sls-go-mod/src/services/util"
+	"github.com/serverless/sls-go-mod/src/lib/util"
 )
 
 func TestHandler(t *testing.T) {

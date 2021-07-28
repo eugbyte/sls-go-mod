@@ -8,8 +8,8 @@ import (
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
+	"github.com/serverless/sls-go-mod/src/lib/util"
 	"github.com/serverless/sls-go-mod/src/middleware"
-	"github.com/serverless/sls-go-mod/src/services/util"
 )
 
 type Response = events.APIGatewayProxyResponse

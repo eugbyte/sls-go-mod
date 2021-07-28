@@ -12,8 +12,8 @@ import (
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/pkg/errors"
 	"github.com/serverless/sls-go-mod/src/data"
+	"github.com/serverless/sls-go-mod/src/lib/util"
 	"github.com/serverless/sls-go-mod/src/middleware"
-	"github.com/serverless/sls-go-mod/src/services/util"
 )
 
 type Response = events.APIGatewayProxyResponse
