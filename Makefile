@@ -29,11 +29,14 @@ watch:
 
 #----TESTING----
 # rmb to start the db first with `make db`
+
 test-handlers:
 	go test -v ./src/handlers/...
+	go clean -testcache
 
 test:
 	make test-handlers
+
 #----DYNAMODB LOCAL----
 
 db-start:
