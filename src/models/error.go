@@ -16,7 +16,7 @@ type HttpError struct {
 }
 
 func (er HttpError) Error() string {
-	return er.Error()
+	return er.Err.Error()
 }
 
 func (er HttpError) Log() {

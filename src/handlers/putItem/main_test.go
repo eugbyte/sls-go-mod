@@ -32,6 +32,11 @@ func TestHandler(t *testing.T) {
 
 	var actualBook models.Book
 	err = json.Unmarshal([]byte(response.Body), &actualBook)
+	if err != nil {
+		t.Error("could not unmarshall book")
+		return
+	}
+
 	if !cmp.Equal(book, actualBook) {
 		t.Errorf("test failed. Expected book to be %v, but got %v", book, actualBook)
 		t.Error("attempting to print out response body")

@@ -109,7 +109,7 @@ func (adapter *DynamoDBAdapter) Update(updateInput *dynamodb.UpdateItemInput) er
 
 	_, err := Client.UpdateItem(updateInput)
 	if err != nil {
-		error := errors.Errorf("Got error calling UpdateItem", err)
+		error := errors.Errorf("Got error calling UpdateItem: %v", err)
 		return error
 	}
 	return nil
@@ -125,7 +125,7 @@ func (adapter *DynamoDBAdapter) Delete(tableName string, key Attributes, conditi
 	}
 	_, err := Client.DeleteItem(deleteInput)
 	if err != nil {
-		error := errors.Errorf("Got error calling Delete", err)
+		error := errors.Errorf("Got error calling Delete: %v", err)
 		return error
 	}
 	return nil
