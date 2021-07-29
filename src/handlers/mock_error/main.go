@@ -6,6 +6,7 @@ import (
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/pkg/errors"
+	"github.com/serverless/sls-go-mod/src/middleware"
 	"github.com/serverless/sls-go-mod/src/models"
 )
 
@@ -14,12 +15,13 @@ type Request = events.APIGatewayProxyRequest
 
 // The lambda handler can return 2 values. interface{} and error
 // Note that for error handling, you must still return a Response
-// https://stackoverflow.com/a/48462676/6514532
+// https://stackoverflow.com/a/48462676/514532
 func Handler(request Request) (Response, error) {
-	customErr := models.CustomError{StatusCode: http.StatusBadRequest, Err: errors.New("Custom Error Message!!!")}
-	return customErr.ToResponse(), nil
+	httpError := models.HttpError{Err: errors.New("Custom Error Message!!!"), StatusCode: http.StatusBadRequest}
+	return httpError.ToResponseAndLog(), nil
 }
 
 func main() {
-	lambda.Start(Handler)
+	wrappedHandler := middleware.Middify(Handler)
+	lambda.Start(wrappedHandler)
 }

@@ -1,7 +1,6 @@
 package main
 
 import (
-	"log"
 	"net/http"
 
 	"github.com/aws/aws-lambda-go/events"
@@ -32,9 +31,8 @@ func Handler(dynamoDBAdapter data.IDynamoDBAdapter, request Request) (Response, 
 	var book models.Book
 	err := dynamoDBAdapter.GetItem("Book", key, &book)
 	if err != nil {
-		err = errors.Wrap(err, "Cannot find book: "+Id)
-		log.Fatal(err)
-		return Response{Body: err.Error(), StatusCode: http.StatusBadRequest}, nil
+		httpError := models.HttpError{Err: errors.Wrap(err, "Cannot find book: "+Id), StatusCode: http.StatusBadRequest}
+		return httpError.ToResponseAndLog(), nil
 	}
 
 	responseBody := util.Stringify(book)

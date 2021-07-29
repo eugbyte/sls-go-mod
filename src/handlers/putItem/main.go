@@ -25,7 +25,8 @@ func Handler(dynamoDBAdapter data.IDynamoDBAdapter, request Request) (Response, 
 	if err != nil {
 		err = errors.Wrap(err, "Cannot unmarshall")
 		log.Fatal(err)
-		return Response{Body: err.Error(), StatusCode: http.StatusBadRequest}, nil
+		httpError := models.HttpError{Err: errors.Wrap(err, "Cannot unmarshall"), StatusCode: http.StatusBadRequest}
+		return httpError.ToResponse(), nil
 	}
 
 	book.Id = uuid.New().String()
@@ -36,15 +37,14 @@ func Handler(dynamoDBAdapter data.IDynamoDBAdapter, request Request) (Response, 
 
 	_, err = dynamoDBAdapter.Put("Book", book, nil)
 	if err != nil {
-		err = errors.Wrap(err, "cannot put book")
-		log.Fatal(err)
-		return Response{Body: err.Error(), StatusCode: http.StatusInternalServerError}, nil
+		httpError := models.HttpError{Err: errors.Wrap(err, "cannot put book"), StatusCode: http.StatusInternalServerError}
+		return httpError.ToResponseAndLog(), nil
 	}
 
 	response := Response{
 		StatusCode:      200,
 		IsBase64Encoded: false,
-		Body:            string(request.Body),
+		Body:            request.Body,
 		Headers: map[string]string{
 			"Content-Type": "application/json",
 		},

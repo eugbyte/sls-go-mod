@@ -1,7 +1,6 @@
 package main
 
 import (
-	"log"
 	"net/http"
 
 	"github.com/aws/aws-lambda-go/events"
@@ -29,17 +28,15 @@ func Handler(dynamoDBAdapter data.IDynamoDBAdapter, request Request) (Response, 
 	var books []models.Book
 	err := dynamoDBAdapter.Scan("Book", expr, &books)
 	if err != nil {
-		err = errors.Wrap(err, "cannot scan")
-		log.Fatal(err)
-		return Response{Body: err.Error(), StatusCode: http.StatusBadRequest}, nil
+		httpError := models.HttpError{Err: errors.Wrap(err, "cannot scan"), StatusCode: http.StatusBadRequest}
+		return httpError.ToResponse(), nil
 	}
 
 	responseBody := util.Stringify(books)
 
 	response := Response{
-		StatusCode:      200,
-		IsBase64Encoded: false,
-		Body:            responseBody,
+		StatusCode: 200,
+		Body:       responseBody,
 		Headers: map[string]string{
 			"Content-Type": "application/json",
 		},
