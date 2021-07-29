@@ -22,6 +22,7 @@ build:
 	env GOOS=linux go build -o bin/scanAll -ldflags="-s -w" src/handlers/scanAll/main.go
 	env GOOS=linux go build -o bin/getItem -ldflags="-s -w" src/handlers/getItem/main.go
 	env GOOS=linux go build -o bin/delete -ldflags="-s -w" src/handlers/delete/main.go
+	env GOOS=linux go build -o bin/mock_error -ldflags="-s -w" src/handlers/mock_error/main.go
 
 watch: 
 	make build
@@ -29,11 +30,14 @@ watch:
 
 #----TESTING----
 # rmb to start the db first with `make db`
+
 test-handlers:
 	go test -v ./src/handlers/...
+	go clean -testcache
 
 test:
 	make test-handlers
+
 #----DYNAMODB LOCAL----
 
 db-start:

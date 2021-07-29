@@ -2,14 +2,15 @@ package main
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 	"strings"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
+	"github.com/pkg/errors"
+	"github.com/serverless/sls-go-mod/src/lib/util"
 	"github.com/serverless/sls-go-mod/src/middleware"
-	"github.com/serverless/sls-go-mod/src/services/util"
+	"github.com/serverless/sls-go-mod/src/models"
 )
 
 type Response = events.APIGatewayProxyResponse
@@ -27,19 +28,12 @@ func Handler(request Request) (Response, error) {
 	var requestBody RequestBody
 	err := json.Unmarshal([]byte(request.Body), &requestBody)
 	if err != nil {
-		log.Fatal("Cannot unmarshall:", err)
-		return Response{Body: err.Error(), StatusCode: http.StatusBadRequest}, err
+		httpError := models.HttpError{Err: errors.Wrap(err, "Cannot unmarshall: "), StatusCode: http.StatusBadRequest}
+		return httpError.ToResponseAndLog(), nil
 	}
 
 	message := requestBody.Message
 	message = strings.ToUpper(message) + "!!"
-	// responseBody, err := json.Marshal((map[string]string{
-	// 	"message": message,
-	// }))
-	// if err != nil {
-	// 	log.Fatal("Cannot unmarshall:", err)
-	// 	return Response{Body: err.Error(), StatusCode: http.StatusInternalServerError}, err
-	// }
 	responseBody := util.Stringify(map[string]string{
 		"message": message,
 	})

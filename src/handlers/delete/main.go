@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 
 	"github.com/aws/aws-lambda-go/events"
@@ -12,8 +11,9 @@ import (
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/pkg/errors"
 	"github.com/serverless/sls-go-mod/src/data"
+	"github.com/serverless/sls-go-mod/src/lib/util"
 	"github.com/serverless/sls-go-mod/src/middleware"
-	"github.com/serverless/sls-go-mod/src/services/util"
+	"github.com/serverless/sls-go-mod/src/models"
 )
 
 type Response = events.APIGatewayProxyResponse
@@ -28,9 +28,8 @@ func Handler(dynamoDBAdapter data.IDynamoDBAdapter, request Request) (Response, 
 	var requestBody RequestBody
 	err := json.Unmarshal([]byte(request.Body), &requestBody)
 	if err != nil {
-		err = errors.Wrap(err, "Cannot unmarshall")
-		log.Fatal(err)
-		return Response{Body: err.Error(), StatusCode: http.StatusBadRequest}, err
+		httpError := models.HttpError{Err: errors.Wrap(err, "Cannot unmarshall"), StatusCode: http.StatusBadRequest}
+		return httpError.ToResponseAndLog(), nil
 	}
 	Id := requestBody.Id
 	util.Trace("id", Id)
@@ -42,12 +41,10 @@ func Handler(dynamoDBAdapter data.IDynamoDBAdapter, request Request) (Response, 
 	}
 
 	conditionExpression := "attribute_exists(Id)"
-
 	err = dynamoDBAdapter.Delete("Book", key, &conditionExpression)
 	if err != nil {
-		err = errors.Wrap(err, "cannot delete item")
-		log.Fatal(err)
-		return Response{Body: err.Error(), StatusCode: http.StatusInternalServerError}, err
+		httpError := models.HttpError{Err: errors.Wrap(err, "cannot delete item"), StatusCode: http.StatusInternalServerError}
+		return httpError.ToResponseAndLog(), nil
 	}
 
 	responseBody := util.Stringify(map[string]string{

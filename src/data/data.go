@@ -11,6 +11,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
 	"github.com/aws/aws-sdk-go/service/dynamodb/expression"
 	"github.com/pkg/errors"
+	localConfig "github.com/serverless/sls-go-mod/src/lib/config"
 )
 
 type Attributes = map[string]*dynamodb.AttributeValue
@@ -35,15 +36,17 @@ type IDynamoDBAdapter interface {
 // })
 var currentSession = session.Must(session.NewSession())
 
-var config = aws.NewConfig().
-	WithRegion("ap-southeast-1").
+var config = localConfig.Config
+
+var awsConfig = aws.NewConfig().
+	WithRegion(config.REGION).
 	WithCredentials(
-		credentials.NewStaticCredentials("123", "123", ""),
+		credentials.NewStaticCredentials(config.ACCESS_KEY_ID, config.SECRET_ACCESS_KEY, ""),
 	).
-	WithEndpoint("http://host.docker.internal:18000")
+	WithEndpoint(config.DYNAMO_DB_ENDPOINT)
 
 // Create DynamoDB Client
-var Client = dynamodb.New(currentSession, config)
+var Client = dynamodb.New(currentSession, awsConfig)
 
 // When an existing item found, Put replaces it with the new one
 func (adapter *DynamoDBAdapter) Put(tableName string, obj interface{}, condtionExpression *string) (interface{}, error) {

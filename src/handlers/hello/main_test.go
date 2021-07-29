@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/serverless/sls-go-mod/src/services/util"
+	"github.com/serverless/sls-go-mod/src/lib/util"
 )
 
 func TestHandler(t *testing.T) {
@@ -21,7 +21,7 @@ func TestHandler(t *testing.T) {
 		t.Error("Error unmarshalling response body to map[string]string")
 	}
 	message := messageNap["message"]
-	if messageNap["message"] != "Hello!!" {
+	if messageNap["message"] != "HELLO!!" {
 		t.Errorf("test failed. Expected %v, received %v", message, "Hello!!")
 	} else {
 		t.Logf("test passed. Expected %v, received %v", message, "Hello!!")

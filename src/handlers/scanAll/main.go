@@ -1,7 +1,6 @@
 package main
 
 import (
-	"log"
 	"net/http"
 
 	"github.com/aws/aws-lambda-go/events"
@@ -10,9 +9,9 @@ import (
 	"github.com/aws/aws-sdk-go/service/dynamodb/expression"
 	"github.com/pkg/errors"
 	"github.com/serverless/sls-go-mod/src/data"
+	"github.com/serverless/sls-go-mod/src/lib/util"
 	"github.com/serverless/sls-go-mod/src/middleware"
 	"github.com/serverless/sls-go-mod/src/models"
-	"github.com/serverless/sls-go-mod/src/services/util"
 )
 
 type Response = events.APIGatewayProxyResponse
@@ -29,17 +28,15 @@ func Handler(dynamoDBAdapter data.IDynamoDBAdapter, request Request) (Response, 
 	var books []models.Book
 	err := dynamoDBAdapter.Scan("Book", expr, &books)
 	if err != nil {
-		err = errors.Wrap(err, "cannot scan")
-		log.Fatal(err)
-		return Response{Body: err.Error(), StatusCode: http.StatusBadRequest}, err
+		httpError := models.HttpError{Err: errors.Wrap(err, "cannot scan"), StatusCode: http.StatusBadRequest}
+		return httpError.ToResponse(), nil
 	}
 
 	responseBody := util.Stringify(books)
 
 	response := Response{
-		StatusCode:      200,
-		IsBase64Encoded: false,
-		Body:            responseBody,
+		StatusCode: 200,
+		Body:       responseBody,
 		Headers: map[string]string{
 			"Content-Type": "application/json",
 		},
