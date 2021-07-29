@@ -13,8 +13,8 @@ import (
 type Response = events.APIGatewayProxyResponse
 type Request = events.APIGatewayProxyRequest
 
-// The lambda handler can return 2 values. interface{} and error
-// Note that for error handling, you must still return a Response
+// The lambda handler can return 2 values. interface{} and error.
+// Note that for error handling, you must still return a Response.
 // https://stackoverflow.com/a/48462676/514532
 func Handler(request Request) (Response, error) {
 	httpError := models.HttpError{Err: errors.New("Custom Error Message!!!"), StatusCode: http.StatusBadRequest}

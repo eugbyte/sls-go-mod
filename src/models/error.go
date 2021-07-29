@@ -15,15 +15,17 @@ type HttpError struct {
 	Err        error
 }
 
-func (er *HttpError) Error() string {
-	return er.Error()
+func (er HttpError) Error() string {
+	return er.Err.Error()
 }
 
-func (er *HttpError) Log() {
-	log.Println(colors.Red, er.Error(), colors.Reset)
+func (er HttpError) Log() {
+	// calling er.Err will result in stack overflow
+	errorMessage := er.Err.Error()
+	log.Println(colors.Red, errorMessage, colors.Reset)
 }
 
-func (er *HttpError) ToResponse() Response {
+func (er HttpError) ToResponse() Response {
 	responseBody := util.Stringify(map[string]string{
 		"message": er.Err.Error(),
 	})
@@ -36,7 +38,7 @@ func (er *HttpError) ToResponse() Response {
 	}
 }
 
-func (er *HttpError) ToResponseAndLog() Response {
+func (er HttpError) ToResponseAndLog() Response {
 	er.Log()
 	return er.ToResponse()
 }
