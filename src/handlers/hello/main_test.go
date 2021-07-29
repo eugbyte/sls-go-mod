@@ -12,7 +12,8 @@ func TestHandler(t *testing.T) {
 	mockRequest.Body = util.Stringify(RequestBody{Message: "Hello"})
 	response, err := Handler(mockRequest)
 	if err != nil {
-		t.Errorf("An error occured in Handler %v", err)
+		t.Errorf("An error occured with API Gateway %v", err)
+		return
 	}
 
 	var messageNap map[string]string
