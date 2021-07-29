@@ -47,7 +47,12 @@ func Handler(dynamoDBAdapter data.IDynamoDBAdapter, request Request) (Response, 
 	if err != nil {
 		err = errors.Wrap(err, "cannot delete item")
 		log.Fatal(err)
-		return Response{Body: err.Error(), StatusCode: http.StatusInternalServerError}, err
+		return Response{
+			Body: util.Stringify(map[string]string{
+				"errorMessage": err.Error(),
+			}),
+			StatusCode: http.StatusInternalServerError,
+		}, nil
 	}
 
 	responseBody := util.Stringify(map[string]string{

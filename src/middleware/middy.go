@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"fmt"
+	"log"
 
 	colors "github.com/TwinProduction/go-color"
 	"github.com/aws/aws-lambda-go/events"
@@ -17,12 +18,12 @@ func Middify(handler func(request Request) (Response, error)) func(request Reque
 
 		response, err := handler(request)
 
-		// Logic to process response and error here...
+		// Logic to log response and error here...
 		fmt.Println(colors.Green, "middleware: post-processing...", colors.Reset)
 		if err != nil {
-			fmt.Println(colors.Red, err, colors.Reset)
+			log.Println(colors.Red, err, colors.Reset)
 		}
 
-		return response, err
+		return response, nil
 	}
 }

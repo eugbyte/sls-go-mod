@@ -31,7 +31,7 @@ func Handler(dynamoDBAdapter data.IDynamoDBAdapter, request Request) (Response, 
 	if err != nil {
 		err = errors.Wrap(err, "cannot scan")
 		log.Fatal(err)
-		return Response{Body: err.Error(), StatusCode: http.StatusBadRequest}, err
+		return Response{Body: err.Error(), StatusCode: http.StatusBadRequest}, nil
 	}
 
 	responseBody := util.Stringify(books)

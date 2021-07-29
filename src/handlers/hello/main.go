@@ -28,7 +28,7 @@ func Handler(request Request) (Response, error) {
 	err := json.Unmarshal([]byte(request.Body), &requestBody)
 	if err != nil {
 		log.Fatal("Cannot unmarshall:", err)
-		return Response{Body: err.Error(), StatusCode: http.StatusBadRequest}, err
+		return Response{Body: err.Error(), StatusCode: http.StatusBadRequest}, nil
 	}
 
 	message := requestBody.Message

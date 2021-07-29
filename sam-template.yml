@@ -67,6 +67,19 @@ Resources:
             Method: post
       Timeout: 3
 
+  MockErrorFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: bin/mock_error
+      Runtime: go1.x
+      Events:
+        Vote:
+          Type: Api
+          Properties:
+            Path: /mock_error
+            Method: get
+      Timeout: 3
+
   BookTable:
     Type: AWS::DynamoDB::Table
     Properties: 
