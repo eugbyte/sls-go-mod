@@ -154,7 +154,11 @@ func (adapter *DynamoDBAdapter) Scan(tableName string, expr expression.Expressio
 	}
 
 	items := result.Items
-	dynamodbattribute.UnmarshalListOfMaps(items, outslice)
+	err = dynamodbattribute.UnmarshalListOfMaps(items, outslice)
+	if err != nil {
+		error := errors.Wrap(err, "Got error calling Scan")
+		return error
+	}
 
 	return err
 }

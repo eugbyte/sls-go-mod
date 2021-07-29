@@ -5,7 +5,6 @@ import (
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
-	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/expression"
 	"github.com/pkg/errors"
 	"github.com/serverless/sls-go-mod/src/data"
@@ -16,7 +15,6 @@ import (
 
 type Response = events.APIGatewayProxyResponse
 type Request = events.APIGatewayProxyRequest
-type Attributes = map[string]*dynamodb.AttributeValue
 
 func Handler(dynamoDBAdapter data.IDynamoDBAdapter, request Request) (Response, error) {
 
