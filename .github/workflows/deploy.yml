@@ -37,6 +37,8 @@ jobs:
         run: go mod download
       - name: Start db
         run: make db-start
+      - name: Print dir
+        run: ls
       - name: Create table
         run: aws dynamodb create-table --cli-input-json file://src/data/seed/create_book_table.json --endpoint-url http://localhost:18000
       - name: Seed table
