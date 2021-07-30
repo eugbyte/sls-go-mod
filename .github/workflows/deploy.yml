@@ -49,8 +49,8 @@ jobs:
       - name: Start db
         run: make db-start
 
-      - name: Ping db
-        run: ping https://www.google.com/
+      # - name: Ping db
+      #   run: ping https://www.google.com/
 
       - name: Chmod seed files
         run: chmod +x ./src/data/seed/create_book_table.json && chmod +x ./src/data/seed/seed_book_table.json
