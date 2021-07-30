@@ -15,8 +15,8 @@ jobs:
         uses: actions/checkout@v2
       - name: Update ubuntu
         run: apt update
-      - name: Install curl, jq, make, docker-compose
-        run:  apt -qq -y install curl jq build-essential
+      - name: Install curl, jq, make, zip
+        run:  apt -qq -y install curl jq build-essential zip
       - name: Install docker-compose
         run: |
           curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose \
