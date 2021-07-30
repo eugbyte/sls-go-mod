@@ -1,0 +1,30 @@
+name: golang CI
+
+on: [push, pull_request]
+
+jobs:
+  staging:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print dir
+        run: pwd && ls
+      - name: Checkout sls-go-mod
+        go: actions/checkout@v2
+      - name: Update ubuntu
+        run: apt update
+      - name: Install curl, jq, make
+        run:  apt -qq -y install curl jq build-essential
+      - name: Install Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: '1.16.6'
+      - name: Install go modules
+        run: go mod download
+      - name: Run local db
+        run: make db
+      - name: Run test
+        run: make test
+      - name: Run lint
+        run: make lint-install && make lint
+
+
