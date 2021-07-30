@@ -44,7 +44,7 @@ test:
 #----DYNAMODB LOCAL----
 
 db-start:
-	docker-compose -f src/data/seed/docker-compose.yaml up -d --verbose
+	docker-compose -f src/data/seed/docker-compose.yaml up -d
 
 db-stop:
 	docker-compose -f src/data/seed/docker-compose.yaml down
@@ -53,7 +53,7 @@ db-create-table:
 	aws dynamodb create-table --cli-input-json file://src/data/seed/create_book_table.json --endpoint-url http://localhost:18000 --debug
 
 db-seed-data:
-	aws dynamodb batch-write-item --request-items file://src/data/seed/seed_book_table.json --endpoint-url http://localhost:18000 --debug
+	aws dynamodb batch-write-item --request-items file://src/data/seed/seed_book_table.json --endpoint-url http://localhost:18000
 
 db-admin:
 	@if [ -z `which dynamodb-admin 2> /dev/null` ]; then \

@@ -29,15 +29,15 @@ jobs:
           curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose \
           && chmod +x /usr/local/bin/docker-compose
 
-      - name: install aws-cli
-        run: |
-          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" \
-          && unzip -qq awscliv2.zip \
-          && ./aws/install
-      - name: Print dir
-        run: ls
-      - name: Delete downloaded aws files
-        run: rm -rf aws && rm -rf awscliv2.zip
+      # - name: install aws-cli
+      #   run: |
+      #     curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" \
+      #     && unzip -qq awscliv2.zip \
+      #     && ./aws/install
+      # - name: Print dir
+      #   run: ls
+      # - name: Delete downloaded aws files
+      #   run: rm -rf aws && rm -rf awscliv2.zip
 
       - name: Install Go
         uses: actions/setup-go@v2
