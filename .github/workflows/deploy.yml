@@ -8,15 +8,18 @@ jobs:
     container:
       image: ubuntu:latest
       options: --user 0
+    defaults:
+      run:
+        shell: bash
     steps:
       - name: Print dir
         run: pwd && ls
       - name: Checkout sls-go-mod
         uses: actions/checkout@v2
       - name: Update ubuntu
-        run: apt update
+        run: apt-get update
       - name: Install curl, jq, make, zip
-        run:  apt -qq -y install curl jq build-essential zip
+        run:  apt-get -qq -y install curl jq build-essential zip
       - name: Install docker-compose
         run: |
           curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose \
