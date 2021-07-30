@@ -5,9 +5,9 @@ on: [push]
 jobs:
   deploy-staging:
     runs-on: ubuntu-latest
-    container:
-      image: ubuntu:latest
-      options: --user 0
+    # container:
+    #   image: ubuntu:latest
+    #   options: --user 0
     defaults:
       run:
         shell: bash
