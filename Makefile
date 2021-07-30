@@ -44,7 +44,7 @@ test:
 #----DYNAMODB LOCAL----
 
 db-start:
-	docker-compose -f src/data/seed/docker-compose.yaml up -d
+	docker-compose -f src/data/seed/docker-compose.yaml up -d --verbose
 
 db-stop:
 	docker-compose -f src/data/seed/docker-compose.yaml down
