@@ -21,8 +21,8 @@ jobs:
       - name: Update ubuntu
         run: apt-get update
 
-      - name: Install curl, jq, make, zip, ping
-        run:  apt-get -qq -y install curl jq build-essential zip iputils-ping
+      - name: Install curl, jq, make, zip, ping, net-tools
+        run:  apt-get -qq -y install curl jq build-essential zip iputils-ping net-tools
 
       - name: Install docker-compose
         run: |
