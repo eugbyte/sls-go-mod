@@ -13,7 +13,7 @@ jobs:
         shell: bash
     steps:
       - name: Print dir
-        run: pwd && ls
+        run: ls
       - name: Checkout sls-go-mod
         uses: actions/checkout@v2
       - name: Update ubuntu
@@ -40,7 +40,7 @@ jobs:
       - name: Create table
         run: make db-create-table
       - name: Seed table
-        run: make db-seed-data
+        run: aws dynamodb create-table --cli-input-json file://src/data/seed/create_book_table.json --endpoint-url http://localhost:18000
       - name: Run test
         run: make test
       - name: Run lint
