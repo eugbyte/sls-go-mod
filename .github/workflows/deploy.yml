@@ -50,7 +50,7 @@ jobs:
         run: make db-start
 
       - name: Ping db
-        run: ping http://localhost:18000
+        run: ping https://www.google.com/
 
       - name: Chmod seed files
         run: chmod +x ./src/data/seed/create_book_table.json && chmod +x ./src/data/seed/seed_book_table.json
