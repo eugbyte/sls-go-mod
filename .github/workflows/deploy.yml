@@ -49,6 +49,9 @@ jobs:
       - name: Start db
         run: make db-start
 
+      - name: List ports
+        run: netstat -a -o
+
       - name: Ping db
         run: curl http://host.docker.internal:18000
 
