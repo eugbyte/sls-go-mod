@@ -38,9 +38,9 @@ jobs:
       - name: Start db
         run: make db-start
       - name: Create table
-        run: make db-create-table
-      - name: Seed table
         run: aws dynamodb create-table --cli-input-json file://src/data/seed/create_book_table.json --endpoint-url http://localhost:18000
+      - name: Seed table
+        run: make db-seed-data
       - name: Run test
         run: make test
       - name: Run lint
