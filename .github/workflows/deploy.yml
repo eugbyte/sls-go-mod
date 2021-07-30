@@ -9,7 +9,7 @@ jobs:
       - name: Print dir
         run: pwd && ls
       - name: Checkout sls-go-mod
-        go: actions/checkout@v2
+        uses: actions/checkout@v2
       - name: Update ubuntu
         run: apt update
       - name: Install curl, jq, make
