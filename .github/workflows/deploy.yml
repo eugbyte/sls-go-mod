@@ -18,8 +18,8 @@ jobs:
       - name: Checkout sls-go-mod
         uses: actions/checkout@v2
 
-      - name: Update ubuntu
-        run: apt-get update
+      # - name: Update ubuntu
+      #   run: apt-get update
 
       - name: Install curl, jq, make, zip, ping
         run:  apt-get -qq -y install curl jq build-essential zip iputils-ping
