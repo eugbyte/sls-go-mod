@@ -3,8 +3,11 @@ name: golang CI
 on: [push, pull_request]
 
 jobs:
-  staging:
+  deploy-staging:
     runs-on: ubuntu-latest
+    container:
+      image: ubuntu:latest
+      options: --user 0
     steps:
       - name: Print dir
         run: pwd && ls
