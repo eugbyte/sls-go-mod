@@ -5,9 +5,9 @@ on: [push]
 jobs:
   deploy-staging:
     runs-on: ubuntu-latest
-    # container:
-    #   image: ubuntu:latest
-    #   options: --user 0
+    container:
+      image: ubuntu:latest
+      options: --user 0
     defaults:
       run:
         shell: bash
@@ -18,8 +18,8 @@ jobs:
       - name: Checkout sls-go-mod
         uses: actions/checkout@v2
 
-      # - name: Update ubuntu
-      #   run: apt-get update
+      - name: Update ubuntu
+        run: apt-get update
 
       - name: Install curl, jq, make, zip, ping
         run:  apt-get -qq -y install curl jq build-essential zip iputils-ping
@@ -49,8 +49,8 @@ jobs:
       - name: Start db
         run: make db-start
 
-      # - name: Ping db
-      #   run: ping https://www.google.com/
+      - name: Ping db
+        run: curl http://localhost:18000
 
       - name: Chmod seed files
         run: chmod +x ./src/data/seed/create_book_table.json && chmod +x ./src/data/seed/seed_book_table.json
