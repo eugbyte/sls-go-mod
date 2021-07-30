@@ -68,6 +68,7 @@ db:
 	make db-start
 	make db-create-table
 	make db-seed-data
+	make db-admin
 
 #----LINT----
 lint-install:

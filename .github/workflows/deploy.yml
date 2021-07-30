@@ -30,10 +30,14 @@ jobs:
         uses: actions/setup-go@v2
         with:
           go-version: '1.16.6'
-      - name: Install go modules
+      - name: Install Go modules
         run: go mod download
-      - name: Run local db
-        run: make db
+      - name: Start db
+        run: make db-start
+      - name: Create table
+        run: make db-create-table
+      - name: Seed table
+        run: make db-seed-data
       - name: Run test
         run: make test
       - name: Run lint
