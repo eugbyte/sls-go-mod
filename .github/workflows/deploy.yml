@@ -29,7 +29,7 @@ jobs:
           curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" \
           && unzip -qq awscliv2.zip \
           && ./aws/install
-      - name: delete aws files
+      - name: Delete downloaded aws files
         run: rm -rf aws && rm -rf awscliv2.zip
       - name: Install Go
         uses: actions/setup-go@v2
