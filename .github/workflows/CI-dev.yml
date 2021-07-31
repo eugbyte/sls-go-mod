@@ -6,14 +6,9 @@ jobs:
   CI-dev:
     runs-on: ubuntu-latest
 
-    container:
-      image: ubuntu:latest
-      options: --user 0
-      container: ubuntu:latest
-      steps:
-        - name: Print dir
-          run: ls
-
+    # container:
+    #   image: ubuntu:latest
+    #   options: --user 0
 
     env:
       AWS_ACCESS_KEY_ID: "123"
