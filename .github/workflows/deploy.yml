@@ -53,7 +53,7 @@ jobs:
         run: netstat -a -o | grep 18000
 
       - name: Ping db
-        run: curl http://host.docker.internal:18000
+        run: ping http://localhost:18000
 
       - name: Chmod seed files
         run: chmod +x ./src/data/seed/create_book_table.json && chmod +x ./src/data/seed/seed_book_table.json
