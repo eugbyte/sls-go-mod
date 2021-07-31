@@ -22,10 +22,10 @@ func TestHandler(t *testing.T) {
 		t.Fatal("Error unmarshalling response body to map[string]string")
 	}
 	message := messageNap["message"]
-	if messageNap["message"] != "HELLO!!" {
+	if message != "HELLO!!" {
 		t.Fatalf("test failed. Expected %v, received %v", message, "Hello!!")
 	} else {
-		t.Fatalf("test passed. Expected %v, received %v", message, "Hello!!")
+		t.Logf("test passed. Expected %v, received %v", message, "Hello!!")
 	}
 
 }
