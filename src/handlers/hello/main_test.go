@@ -23,9 +23,9 @@ func TestHandler(t *testing.T) {
 	}
 	message := messageNap["message"]
 	if message != "HELLO!!" {
-		t.Fatalf("test failed. Expected %v, received %v", message, "Hello!!")
+		t.Fatalf("test failed. Expected %v, received %v", "HELLO!!", message)
 	} else {
-		t.Logf("test passed. Expected %v, received %v", message, "Hello!!")
+		t.Logf("test passed. Expected %v, received %v", "HELLO!!", message)
 	}
 
 }
