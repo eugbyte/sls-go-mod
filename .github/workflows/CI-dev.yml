@@ -69,7 +69,7 @@ jobs:
         run: make test
 
       - name: Install golangci-lint
-        run: make lint-install
+        run: sudo make lint-install
 
       - name: Run lint
         run: make lint
