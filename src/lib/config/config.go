@@ -11,15 +11,15 @@ func getEnvOrDefault(key string, defaultValue string) string {
 }
 
 type conf struct {
-	REGION             string
-	ACCESS_KEY_ID      string
-	SECRET_ACCESS_KEY  string
-	DYNAMO_DB_ENDPOINT string
+	AWS_DEFAULT_REGION    string
+	AWS_ACCESS_KEY_ID     string
+	AWS_SECRET_ACCESS_KEY string
+	DYNAMO_DB_ENDPOINT    string
 }
 
 var Config = conf{
-	REGION:             getEnvOrDefault("REGION", "ap-southeast-1"),
-	ACCESS_KEY_ID:      getEnvOrDefault("ACCESS_KEY_ID", "123"),
-	SECRET_ACCESS_KEY:  getEnvOrDefault("SECRET_ACCESS_KEY", "123"),
-	DYNAMO_DB_ENDPOINT: getEnvOrDefault("DYNAMO_DB_ENDPOINT", "http://host.docker.internal:18000"),
+	AWS_DEFAULT_REGION:    getEnvOrDefault("AWS_DEFAULT_REGION", "ap-southeast-1"),
+	AWS_ACCESS_KEY_ID:     getEnvOrDefault("AWS_ACCESS_KEY_ID", "123"),
+	AWS_SECRET_ACCESS_KEY: getEnvOrDefault("AWS_SECRET_ACCESS_KEY", "123"),
+	DYNAMO_DB_ENDPOINT:    getEnvOrDefault("DYNAMO_DB_ENDPOINT", "http://host.docker.internal:18000"),
 }

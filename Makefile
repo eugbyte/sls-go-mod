@@ -15,7 +15,7 @@ deploy: clean build
 aws-sam:
 	sam local start-api --template sam-template.yml --docker-network local-network --region ap-southeast-1  --debug
 
-build: 
+build:
 	export GO111MODULE=on
 	env GOOS=linux go build -o bin/hello -ldflags="-s -w" src/handlers/hello/main.go
 	env GOOS=linux go build -o bin/putItem -ldflags="-s -w" src/handlers/putItem/main.go
@@ -24,7 +24,7 @@ build:
 	env GOOS=linux go build -o bin/delete -ldflags="-s -w" src/handlers/delete/main.go
 	env GOOS=linux go build -o bin/mock_error -ldflags="-s -w" src/handlers/mock_error/main.go
 
-watch: 
+watch:
 	make build
 	when-changed -r "./src" make build
 
@@ -50,7 +50,7 @@ db-stop:
 	docker-compose -f src/data/seed/docker-compose.yaml down
 
 db-create-table:
-	aws dynamodb create-table --cli-input-json file://src/data/seed/create_book_table.json --endpoint-url http://localhost:18000 
+	aws dynamodb create-table --cli-input-json file://src/data/seed/create_book_table.json --endpoint-url http://localhost:18000
 
 db-seed-data:
 	aws dynamodb batch-write-item --request-items file://src/data/seed/seed_book_table.json --endpoint-url http://localhost:18000
@@ -66,7 +66,7 @@ db-admin:
 db:
 	make db-stop || echo "db already stopped"
 	make db-start
-	make db-create-table 
+	make db-create-table
 	make db-seed-data
 	make db-admin
 
@@ -81,4 +81,7 @@ lint:
 			echo "Need to install golangci-lint, execute \"make lint-install\"";\
 			exit 1;\
 	fi
+	golangci-lint run
+
+lint-fix:
 	golangci-lint run --fix
