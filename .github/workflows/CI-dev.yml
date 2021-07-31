@@ -57,6 +57,7 @@ jobs:
         with:
           aws-access-key-id: 123
           aws-secret-access-key: 123
+          aws-session-token: 123
           aws-region: ap-southeast-1
 
       - name: Create table
