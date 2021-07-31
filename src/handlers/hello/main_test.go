@@ -8,8 +8,6 @@ import (
 )
 
 func TestHandler(t *testing.T) {
-	t.FailNow()
-
 	mockRequest := Request{}
 	mockRequest.Body = util.Stringify(RequestBody{Message: "Hello"})
 	response, err := Handler(mockRequest)
