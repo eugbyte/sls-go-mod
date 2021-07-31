@@ -1,6 +1,9 @@
 name: golang CI-dev
 
-on: [push]
+on:
+  push:
+    branches-ignore:
+      - "master"
 
 jobs:
   CI-dev:
