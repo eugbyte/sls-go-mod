@@ -54,20 +54,19 @@ jobs:
         run: netstat -a -o | grep 18000
 
       - name: Ping db
-        run: curl http://localhost:18000
+        run: curl http://localhost:18000 || echo "cannot ping"
 
-      - name: Chmod seed files
-        run: chmod +x ./src/data/seed/create_book_table.json && chmod +x ./src/data/seed/seed_book_table.json
+      # - name: Chmod seed files
+      #   run: chmod +x ./src/data/seed/create_book_table.json && chmod +x ./src/data/seed/seed_book_table.json
 
       - name: Create table
         run: make db-create-table
-
 
       - name: Seed table
         run: make db-seed-data
 
       - name: Run test
-        run: make test
+        run: make test-install-gotest && make test
 
       - name: Run lint
         run: make lint-install && make lint
