@@ -19,24 +19,22 @@ func TestHandler(t *testing.T) {
 
 	response, err := Handler(&data.DynamoDBAdapter{}, mockRequest)
 	if err != nil {
-		t.Errorf("An error occured with API Gateway %v", err)
-		return
+		t.Fatalf("An error occured with API Gateway %v", err)
 	}
 
 	if response.StatusCode != 200 {
 		t.Errorf("test failed. Expected status code to be %d, but got %d", 200, response.StatusCode)
 		t.Error("attempting to print out response body")
 		util.Trace("response.Body:", response.Body)
-		return
+		t.FailNow()
 	}
 	var book models.Book
 	err = json.Unmarshal([]byte(response.Body), &book)
 	if err != nil {
-		t.Error("could not unmarshall book")
-		return
+		t.Fatalf("could not unmarshall book")
 	}
 	if book.Id != id {
-		t.Errorf("test failed. Expected book id to be %s, but got %s", id, book.Id)
+		t.Fatalf("test failed. Expected book id to be %s, but got %s", id, book.Id)
 	}
 
 }

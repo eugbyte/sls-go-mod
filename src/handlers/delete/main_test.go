@@ -16,22 +16,20 @@ func TestHandler(t *testing.T) {
 
 	response, err := Handler(&data.DynamoDBAdapter{}, mockRequest)
 	if err != nil {
-		t.Errorf("An error occured with API Gateway %v", err)
-		return
+		t.Fatalf("An error occured with API Gateway %v", err)
 	}
 
 	if response.StatusCode != 200 {
 		t.Errorf("test failed. Expected status code to be %d, but got %d", 200, response.StatusCode)
-		t.Error("attempting to print out response body")
+		t.Errorf("attempting to print out response body")
 		util.Trace("response.Body:", response.Body)
-		return
+		t.FailNow()
 	}
 
 	var messageBody map[string]string
 	err = json.Unmarshal([]byte(response.Body), &messageBody)
 	if err != nil {
-		t.Error("Cannot unmarshall response.Body")
-		return
+		t.Fatalf("Cannot unmarshall response.Body")
 	}
 
 	message := messageBody["message"]
