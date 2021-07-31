@@ -12,20 +12,20 @@ func TestHandler(t *testing.T) {
 	mockRequest.Body = util.Stringify(RequestBody{Message: "Hello"})
 	response, err := Handler(mockRequest)
 	if err != nil {
-		t.Errorf("An error occured with API Gateway %v", err)
+		t.Fatalf("An error occured with API Gateway %v", err)
 		return
 	}
 
 	var messageNap map[string]string
 	err = json.Unmarshal([]byte(response.Body), &messageNap)
 	if err != nil {
-		t.Error("Error unmarshalling response body to map[string]string")
+		t.Fatal("Error unmarshalling response body to map[string]string")
 	}
 	message := messageNap["message"]
 	if messageNap["message"] != "HELLO!!" {
-		t.Errorf("test failed. Expected %v, received %v", message, "Hello!!")
+		t.Fatalf("test failed. Expected %v, received %v", message, "Hello!!")
 	} else {
-		t.Logf("test passed. Expected %v, received %v", message, "Hello!!")
+		t.Fatalf("test passed. Expected %v, received %v", message, "Hello!!")
 	}
 
 }
