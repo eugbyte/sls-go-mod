@@ -9,6 +9,7 @@ jobs:
     container:
       image: ubuntu:latest
       options: --user 0
+      container: ubuntu:latest
       steps:
         - name: Print dir
           run: ls
