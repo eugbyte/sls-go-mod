@@ -1,4 +1,4 @@
-name: golang CI
+name: golang CI-dev
 
 on: [push]
 
@@ -50,7 +50,7 @@ jobs:
       - name: Start dynamodb local
         run: make db-start
 
-      - name: List ports
+      - name: List db port
         run: netstat -a -o | grep 18000
 
       - name: Create table and seed table
