@@ -39,9 +39,9 @@ var currentSession = session.Must(session.NewSession())
 var config = localConfig.Config
 
 var awsConfig = aws.NewConfig().
-	WithRegion(config.REGION).
+	WithRegion(config.AWS_DEFAULT_REGION).
 	WithCredentials(
-		credentials.NewStaticCredentials(config.ACCESS_KEY_ID, config.SECRET_ACCESS_KEY, ""),
+		credentials.NewStaticCredentials(config.AWS_ACCESS_KEY_ID, config.AWS_SECRET_ACCESS_KEY, ""),
 	).
 	WithEndpoint(config.DYNAMO_DB_ENDPOINT)
 
