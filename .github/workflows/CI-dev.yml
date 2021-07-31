@@ -65,8 +65,11 @@ jobs:
       - name: Seed table
         run: make db-seed-data
 
+      - name: Install gotest
+        run: make test-install-gotest
+
       - name: Run test
-        run: make test-install-gotest && make test
+        run: make test
 
       - name: Run lint
         run: make lint-install && make lint
