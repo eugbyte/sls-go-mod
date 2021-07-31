@@ -5,18 +5,9 @@ on: [push]
 jobs:
   deploy-staging:
     runs-on: ubuntu-latest
-    container:
-      image: ubuntu:latest
-      options: --user 0
-      steps:
-        - name: Start db
-        run: make db-start
-        - name: List ports
-        run: netstat -a -o | grep 18000
-        - name: Create table
-        run: make db-create-table
-
-
+    # container:
+    #   image: ubuntu:latest
+    #   options: --user 0
     defaults:
       run:
         shell: bash
