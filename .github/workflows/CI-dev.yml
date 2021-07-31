@@ -26,7 +26,7 @@ jobs:
         run: ls
 
       - name: Update ubuntu
-        run: sudo apt-get update
+        run: sudo apt-get -qq update
 
       - name: Install curl, jq, make, zip, ping, net-tools
         run:  sudo apt-get -qq -y install curl jq build-essential zip iputils-ping net-tools
@@ -36,8 +36,8 @@ jobs:
         with:
           go-version: '1.16.6'
 
-      - name: Install Go modules
-        run: go mod download
+      - name: Install Go modules, gotest and golangci-lint
+        run: go mod download && make test-install-gotest && sudo make lint-install
 
       - name: Check docker version
         run: docker version
@@ -53,23 +53,11 @@ jobs:
       - name: List ports
         run: netstat -a -o | grep 18000
 
-      - name: Ping db
-        run: curl http://localhost:18000 || echo "cannot ping"
-
-      - name: Create table
-        run: make db-create-table
-
-      - name: Seed table
-        run: make db-seed-data
-
-      - name: Install gotest
-        run: make test-install-gotest
+      - name: Create table and seed table
+        run: make db-create-table && make db-seed-data
 
       - name: Run test
         run: make test
-
-      - name: Install golangci-lint
-        run: sudo make lint-install
 
       - name: Run lint
         run: make lint
