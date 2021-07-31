@@ -19,11 +19,11 @@ jobs:
       run:
         shell: bash
     steps:
-      - name: Print dir
-        run: ls
-
       - name: Checkout sls-go-mod
         uses: actions/checkout@v2
+
+      - name: Print dir
+        run: ls
 
       - name: Update ubuntu
         run: sudo apt-get update
@@ -56,9 +56,6 @@ jobs:
       - name: Ping db
         run: curl http://localhost:18000 || echo "cannot ping"
 
-      # - name: Chmod seed files
-      #   run: chmod +x ./src/data/seed/create_book_table.json && chmod +x ./src/data/seed/seed_book_table.json
-
       - name: Create table
         run: make db-create-table
 
@@ -71,7 +68,10 @@ jobs:
       - name: Run test
         run: make test
 
+      - name: Install golangci-lint
+        run: make lint-install
+
       - name: Run lint
-        run: make lint-install && make lint
+        run: make lint
 
 
